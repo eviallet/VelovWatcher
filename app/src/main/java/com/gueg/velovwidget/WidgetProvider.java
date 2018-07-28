@@ -26,19 +26,13 @@ public class WidgetProvider extends AppWidgetProvider {
         if (intent.getAction()!=null&&intent.getAction().equals(STATION_CLICK_ACTION)) {
             final int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
             final int viewIndex = intent.getIntExtra(STATION_INDEX_EXTRA, 0);
-            Toast.makeText(context, "Touched view " + viewIndex, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Touched " + viewIndex, Toast.LENGTH_SHORT).show();
         }
-    }
-
-    public static void updateItems(Context context, AppWidgetManager appWidgetManager, int appWidgetId, ArrayList<String> items) {
-        Log.d(":-:","WProvider - updateItems");
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_list);
-
-        appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+        Log.d(":-:","WProvider - onUpdate");
         for(int appWidgetId : appWidgetIds) {
             // Parsing views from current widget
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_list);
@@ -51,7 +45,7 @@ public class WidgetProvider extends AppWidgetProvider {
             views.setEmptyView(R.id.widget_list_stations, R.id.widget_list_empty);
 
             // Handling header buttons clicks
-            views.setOnClickPendingIntent(R.id.widget_header_configure, PendingIntent.getBroadcast(context, 0, new Intent(context, PinsActivity.class).setAction(AppWidgetManager.ACTION_APPWIDGET_CONFIGURE).putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId), PendingIntent.FLAG_UPDATE_CURRENT));
+            views.setOnClickPendingIntent(R.id.widget_header_configure, PendingIntent.getActivity(context, 0, new Intent(context, PinsActivity.class).setAction(AppWidgetManager.ACTION_APPWIDGET_CONFIGURE).putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId), PendingIntent.FLAG_UPDATE_CURRENT));
             views.setOnClickPendingIntent(R.id.widget_header_update, PendingIntent.getBroadcast(context, 0, new Intent().setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE).putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds), PendingIntent.FLAG_UPDATE_CURRENT));
             views.setOnClickPendingIntent(R.id.widget_header_title, PendingIntent.getBroadcast(context, 0, new Intent().setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE).putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds), PendingIntent.FLAG_UPDATE_CURRENT));
             views.setOnClickPendingIntent(R.id.widget_header_update_text, PendingIntent.getBroadcast(context, 0, new Intent().setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE).putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds), PendingIntent.FLAG_UPDATE_CURRENT));

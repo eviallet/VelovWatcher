@@ -1,8 +1,15 @@
 package com.gueg.velovwidget;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
+import android.util.Log;
+
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.overlay.OverlayItem;
+
+import java.util.ArrayList;
 
 import static com.gueg.velovwidget.WidgetItem.DATABASE_NAME;
 
@@ -11,12 +18,14 @@ public class WidgetItem {
     public static final String DATABASE_NAME = "widget_items";
 
     @PrimaryKey @NonNull
+    public Integer number;
     public String name;
-    /*
     public String address;
-    public float lat;
-    public float lng;
-    public boolean banking;
+    public double latitude;
+    public double longitude;
+
+    public boolean isPinned;
+    public int rank;
 
 
     @Ignore
@@ -30,21 +39,21 @@ public class WidgetItem {
     @Ignore
     public long last_update;
 
-*/
-
-    public WidgetItem(@NonNull String name) {
-        this.name = name;
+    @Ignore
+    public WidgetItem(@NonNull Integer number, String name, String address, double latitude, double longitude) {
+        this(number, name, address, latitude, longitude, false, -1);
     }
-/*
-    public WidgetItem(@NonNull String name, String address, float lat, float lng, boolean banking, boolean bonus) {
+
+    public WidgetItem(@NonNull Integer number, String name, String address, double latitude, double longitude, boolean isPinned, int rank) {
+        this.number = number;
         this.name = name;
         this.address = address;
-        this.lat = lat;
-        this.lng = lng;
-        this.banking = banking;
-        this.bonus = bonus;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.isPinned = isPinned;
+        this.rank = rank;
+        Log.d(":-:",this.toString());
     }
-
 
     public void updateDynamicData(String status, int bike_stands, int available_bike_stands, int available_bikes, long last_update) {
         this.status = status;
@@ -53,5 +62,33 @@ public class WidgetItem {
         this.available_bikes = available_bikes;
         this.last_update = last_update;
     }
-    */
+
+
+    public OverlayItem toOverlayItem() {
+        return new OverlayItem(Integer.toString(number), name, address, new GeoPoint(latitude, longitude));
+    }
+
+    public boolean isEqual(OverlayItem other) {
+        return number.equals(Integer.decode(other.getUid())) && name.equals(other.getTitle());
+    }
+
+    public static ArrayList<OverlayItem> toOverlayItems(ArrayList<WidgetItem> items) {
+        ArrayList<OverlayItem> res = new ArrayList<>();
+        for(WidgetItem wi : items)
+            res.add(wi.toOverlayItem());
+        return res;
+    }
+
+    public static WidgetItem getWidgetItemFromOverlayItem(ArrayList<WidgetItem> items, OverlayItem oi) {
+        for(WidgetItem item : items)
+            if(item.isEqual(oi))
+                return item;
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return "number = "+number+" - name = "+name+" - address = "+address+" - latitude = "+latitude+" - longitude = "+longitude+" - isPinned = "+isPinned+" - rank = "+rank;
+    }
+
 }

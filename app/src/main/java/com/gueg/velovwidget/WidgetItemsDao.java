@@ -15,6 +15,9 @@ public interface WidgetItemsDao {
     @Query("SELECT * FROM "+DATABASE_NAME)
     List<WidgetItem> getAll();
 
+    @Query("SELECT * FROM "+DATABASE_NAME+" WHERE isPinned LIKE 1")
+    List<WidgetItem> getAllPinned();
+
     @Query("SELECT * FROM "+DATABASE_NAME+" WHERE name LIKE :search LIMIT 1")
     WidgetItem findByName(String search);
 
@@ -26,4 +29,7 @@ public interface WidgetItemsDao {
 
     @Delete
     void delete(WidgetItem items);
+
+    @Query("DELETE FROM "+DATABASE_NAME)
+    void deleteAll();
 }
