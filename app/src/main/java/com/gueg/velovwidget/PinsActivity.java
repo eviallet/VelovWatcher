@@ -16,8 +16,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.RemoteViews;
 
+import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
@@ -26,6 +28,7 @@ import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
+import org.osmdroid.views.util.constants.OverlayConstants;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -106,6 +109,7 @@ public class PinsActivity extends AppCompatActivity {
         // Position overlay
         MyLocationNewOverlay mapOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(this), map);
         mapOverlay.enableMyLocation();
+        GeoPoint myLocation = mapOverlay.getMyLocation();
         map.getOverlays().add(mapOverlay);
 
         // Enable rotation
@@ -117,8 +121,10 @@ public class PinsActivity extends AppCompatActivity {
 
         //the overlay
         ItemizedOverlayWithFocus<OverlayItem> mOverlay = new ItemizedOverlayWithFocus<>(
-                this,
                 WidgetItem.toOverlayItems(items),
+                getResources().getDrawable(R.drawable.marker),
+                getResources().getDrawable(R.drawable.marker_selected),
+                OverlayConstants.NOT_SET,
                 new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
                     @Override
                     public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
@@ -133,10 +139,24 @@ public class PinsActivity extends AppCompatActivity {
                         }
                         return false;
                     }
-        });
+                },
+                this
+        );
         mOverlay.setFocusItemsOnTap(true);
 
         map.getOverlays().add(mOverlay);
+
+        // Limit scrollable area
+        map.setScrollableAreaLimitDouble(WidgetItem.getBoundaries(items));
+
+        // Set initial position
+        IMapController mapController = map.getController();
+        if(myLocation!=null)
+            mapController.setCenter(myLocation);
+        else
+            mapController.setCenter(WidgetItem.getBoundaries(items).getCenter());
+        mapController.setZoom(18.0d);
+
     }
 
     public void onClick(View v) {

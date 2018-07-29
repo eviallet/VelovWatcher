@@ -33,6 +33,9 @@ public class WidgetProvider extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         Log.d(":-:","WProvider - onUpdate");
+        if(!JsonParser.IS_API_KEY_LOADED)
+            JsonParser.loadApiKey(context);
+
         for(int appWidgetId : appWidgetIds) {
             // Parsing views from current widget
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_list);
@@ -48,7 +51,7 @@ public class WidgetProvider extends AppWidgetProvider {
             views.setOnClickPendingIntent(R.id.widget_header_configure, PendingIntent.getActivity(context, 0, new Intent(context, PinsActivity.class).setAction(AppWidgetManager.ACTION_APPWIDGET_CONFIGURE).putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId), PendingIntent.FLAG_UPDATE_CURRENT));
             views.setOnClickPendingIntent(R.id.widget_header_update, PendingIntent.getBroadcast(context, 0, new Intent().setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE).putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds), PendingIntent.FLAG_UPDATE_CURRENT));
             views.setOnClickPendingIntent(R.id.widget_header_title, PendingIntent.getBroadcast(context, 0, new Intent().setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE).putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds), PendingIntent.FLAG_UPDATE_CURRENT));
-            views.setOnClickPendingIntent(R.id.widget_header_update_text, PendingIntent.getBroadcast(context, 0, new Intent().setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE).putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds), PendingIntent.FLAG_UPDATE_CURRENT));
+            views.setOnClickPendingIntent(R.id.widget_update_text, PendingIntent.getBroadcast(context, 0, new Intent().setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE).putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds), PendingIntent.FLAG_UPDATE_CURRENT));
 
             // Handling list clicks
             Intent stationIntent = new Intent(context, WidgetProvider.class);
@@ -58,8 +61,8 @@ public class WidgetProvider extends AppWidgetProvider {
             views.setPendingIntentTemplate(R.id.widget_list_stations, PendingIntent.getBroadcast(context, 0, stationIntent, PendingIntent.FLAG_UPDATE_CURRENT));
 
 
-            views.setTextViewText(R.id.widget_header_update_text,
-                    new SimpleDateFormat("HH:mm", Locale.getDefault()).format(Calendar.getInstance().getTime()));
+            views.setTextViewText(R.id.widget_update_text,
+                    context.getResources().getString(R.string.widget_last_udpate_time)+new SimpleDateFormat("HH:mm", Locale.getDefault()).format(Calendar.getInstance().getTime()));
 
             // Updating widget
             appWidgetManager.updateAppWidget(appWidgetId, views);

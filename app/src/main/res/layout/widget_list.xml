@@ -1,29 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <RelativeLayout
+        android:id="@+id/widget_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary">
-        <TextView
-            android:id="@+id/widget_header_update_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:textColor="@color/colorTextWhite"
-            android:text="--:--"
-            android:textAlignment="center"
-            android:textStyle="bold"
-
-            android:paddingEnd="5dp"
-            android:paddingRight="5dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-
-            android:layout_margin="5dp"/>
         <ImageView
             android:id="@+id/widget_header_update"
             android:layout_width="wrap_content"
@@ -32,8 +17,8 @@
             android:src="@drawable/ic_refresh"
             tools:ignore="ContentDescription"
 
-            android:layout_toStartOf="@id/widget_header_update_text"
-            android:layout_toLeftOf="@id/widget_header_update_text"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
 
             android:layout_margin="5dp"/>
         <ImageView
@@ -62,9 +47,33 @@
 
             android:layout_margin="5dp"/>
     </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/widget_footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+
+        android:layout_alignParentBottom="true">
+        <TextView
+            android:id="@+id/widget_update_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:textColor="@color/colorTextWhite"
+            android:textAlignment="center"
+            android:textStyle="bold"
+
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+
+            android:layout_margin="5dp"/>
+    </RelativeLayout>
     <ListView
         android:id="@+id/widget_list_stations"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
 
-</LinearLayout>
+        android:layout_below="@id/widget_header"
+        android:layout_above="@id/widget_footer"/>
+
+</RelativeLayout>

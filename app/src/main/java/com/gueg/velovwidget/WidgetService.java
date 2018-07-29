@@ -50,23 +50,28 @@ class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory {
     }
     public RemoteViews getViewAt(int position) {
         Log.d(":-:","WService - getViewAt "+position);
+
+        WidgetItem item = JsonParser.updateDynamicalDataFromApi(mWidgetItems.get(position));
+        mWidgetItems.remove(position);
+        mWidgetItems.add(position, item);
+
         RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_item);
         rv.setTextViewText(R.id.widget_item_title, mWidgetItems.get(position).name);
 
         // Available bikes
-        rv.setTextViewText(R.id.widget_item_available_bikes, ""+mWidgetItems.get(position).available_bikes);
-        if(mWidgetItems.get(position).available_bikes<mWidgetItems.get(position).bike_stands*0.15)
+        rv.setTextViewText(R.id.widget_item_available_bikes, ""+mWidgetItems.get(position).data.available_bikes);
+        if(mWidgetItems.get(position).data.available_bikes<mWidgetItems.get(position).data.bike_stands*0.15)
             rv.setTextColor(R.id.widget_item_available_bikes, mContext.getResources().getColor(R.color.colorLow));
-        else if(mWidgetItems.get(position).available_bikes<mWidgetItems.get(position).bike_stands*0.3)
+        else if(mWidgetItems.get(position).data.available_bikes<mWidgetItems.get(position).data.bike_stands*0.3)
             rv.setTextColor(R.id.widget_item_available_bikes, mContext.getResources().getColor(R.color.colorMed));
         else
             rv.setTextColor(R.id.widget_item_available_bikes, mContext.getResources().getColor(R.color.colorHig));
 
         // Available bike stands
-        rv.setTextViewText(R.id.widget_item_available_bike_stands, ""+mWidgetItems.get(position).available_bike_stands);
-        if(mWidgetItems.get(position).available_bike_stands<mWidgetItems.get(position).bike_stands*0.15)
+        rv.setTextViewText(R.id.widget_item_available_bike_stands, ""+mWidgetItems.get(position).data.available_bike_stands);
+        if(mWidgetItems.get(position).data.available_bike_stands<mWidgetItems.get(position).data.bike_stands*0.15)
             rv.setTextColor(R.id.widget_item_available_bike_stands, mContext.getResources().getColor(R.color.colorLow));
-        else if(mWidgetItems.get(position).available_bike_stands<mWidgetItems.get(position).bike_stands*0.3)
+        else if(mWidgetItems.get(position).data.available_bike_stands<mWidgetItems.get(position).data.bike_stands*0.3)
             rv.setTextColor(R.id.widget_item_available_bike_stands, mContext.getResources().getColor(R.color.colorMed));
         else
             rv.setTextColor(R.id.widget_item_available_bike_stands, mContext.getResources().getColor(R.color.colorHig));

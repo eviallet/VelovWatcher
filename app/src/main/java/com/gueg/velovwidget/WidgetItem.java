@@ -5,7 +5,9 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.util.Pair;
 
+import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.OverlayItem;
 
@@ -29,15 +31,7 @@ public class WidgetItem {
 
 
     @Ignore
-    public String status;
-    @Ignore
-    public int bike_stands;
-    @Ignore
-    public int available_bike_stands;
-    @Ignore
-    public int available_bikes;
-    @Ignore
-    public long last_update;
+    public DynamicData data;
 
     @Ignore
     public WidgetItem(@NonNull Integer number, String name, String address, double latitude, double longitude) {
@@ -55,6 +49,7 @@ public class WidgetItem {
         Log.d(":-:",this.toString());
     }
 
+    /*
     public void updateDynamicData(String status, int bike_stands, int available_bike_stands, int available_bikes, long last_update) {
         this.status = status;
         this.bike_stands = bike_stands;
@@ -62,6 +57,7 @@ public class WidgetItem {
         this.available_bikes = available_bikes;
         this.last_update = last_update;
     }
+    */
 
 
     public OverlayItem toOverlayItem() {
@@ -89,6 +85,25 @@ public class WidgetItem {
     @Override
     public String toString() {
         return "number = "+number+" - name = "+name+" - address = "+address+" - latitude = "+latitude+" - longitude = "+longitude+" - isPinned = "+isPinned+" - rank = "+rank;
+    }
+
+    public static BoundingBox getBoundaries(ArrayList<WidgetItem> items) {
+        double latMin = items.get(0).latitude;
+        double latMax = items.get(0).latitude;
+        double lngMin = items.get(0).longitude;
+        double lngMax = items.get(0).longitude;
+
+        for(WidgetItem item : items) {
+            if(item.latitude<latMin)
+                latMin = item.latitude;
+            else if(item.latitude>latMax)
+                latMax = item.latitude;
+            if(item.longitude<lngMin)
+                lngMin = item.longitude;
+            else if(item.longitude>lngMax)
+                lngMax = item.longitude;
+        }
+        return new BoundingBox(latMax, lngMax, latMin, lngMin);
     }
 
 }
