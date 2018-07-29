@@ -45,7 +45,6 @@ public class JsonParser {
             API_KEY = total.toString();
             IS_API_KEY_LOADED = true;
 
-            Log.d(":-:","JsonParser - ApiKey loaded : "+API_KEY);
         } catch(IOException e) {
             e.printStackTrace();
         }

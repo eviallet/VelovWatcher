@@ -46,18 +46,7 @@ public class WidgetItem {
         this.longitude = longitude;
         this.isPinned = isPinned;
         this.rank = rank;
-        Log.d(":-:",this.toString());
     }
-
-    /*
-    public void updateDynamicData(String status, int bike_stands, int available_bike_stands, int available_bikes, long last_update) {
-        this.status = status;
-        this.bike_stands = bike_stands;
-        this.available_bike_stands = available_bike_stands;
-        this.available_bikes = available_bikes;
-        this.last_update = last_update;
-    }
-    */
 
 
     public OverlayItem toOverlayItem() {

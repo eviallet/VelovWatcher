@@ -5,5 +5,7 @@
     android:resizeMode="none"
     android:minWidth="250dp"
     android:minHeight="110dp"
+    android:updatePeriodMillis="1800000"
+    android:previewImage="@drawable/screenshot"
     android:initialLayout="@layout/widget_list"
     android:configure="com.gueg.velovwidget.PinsActivity"/>

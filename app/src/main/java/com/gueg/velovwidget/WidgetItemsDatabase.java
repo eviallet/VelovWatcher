@@ -5,6 +5,7 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -79,8 +80,8 @@ public abstract class WidgetItemsDatabase extends RoomDatabase {
             @Override
             public void run() {
                 item.isPinned = !item.isPinned;
-                WidgetItemsDatabase.getDatabase(c).widgetItemsDao().updateItems(item);
-                Toast.makeText(c, "Item "+item.name+(item.isPinned?"pinned":"unpinned"), Toast.LENGTH_SHORT).show();
+                WidgetItemsDatabase.getDatabase(c.getApplicationContext()).widgetItemsDao().updateItems(item);
+                Toast.makeText(c.getApplicationContext(), "Item "+item.name+(item.isPinned?" pinned":" unpinned"), Toast.LENGTH_SHORT).show();
             }
         }
     }
