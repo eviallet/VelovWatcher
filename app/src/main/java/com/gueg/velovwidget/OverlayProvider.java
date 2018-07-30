@@ -1,67 +1,31 @@
 package com.gueg.velovwidget;
 
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.osmdroid.api.IGeoPoint;
-import org.osmdroid.api.IMapView;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.ItemizedIconOverlay;
-import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Overlay;
-import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.infowindow.MarkerInfoWindow;
 import org.osmdroid.views.overlay.simplefastpoint.LabelledGeoPoint;
 import org.osmdroid.views.overlay.simplefastpoint.SimpleFastPointOverlay;
 import org.osmdroid.views.overlay.simplefastpoint.SimpleFastPointOverlayOptions;
 import org.osmdroid.views.overlay.simplefastpoint.SimplePointTheme;
-import org.osmdroid.views.util.constants.OverlayConstants;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class OverlayProvider {
 
-
-    /**
-     * Pros :
-     * - Easy popup integration when marker clicked
-     * - Customizable popup
-     * - Customizable icon on map
-     * Cons :
-     * - Slow loading (~2.5 s)
-     */
-    public static ArrayList<Overlay> setMarkersOverlay(final MapView map, ArrayList<WidgetItem> items) {
-        ArrayList<Overlay> overlays = new ArrayList<>();
-        for(WidgetItem item : items)
-            overlays.add(getMarkerFromWidgetItem(map, item, true));
-
-        map.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                for(Overlay m : map.getOverlays())
-                    if(m instanceof Marker)
-                        ((Marker) m).closeInfoWindow();
-            }
-        });
-        return overlays;
-    }
-
-    private static Marker getMarkerFromWidgetItem(final MapView map, WidgetItem item, boolean shouldShowIcon) {
+    private static Marker getMarkerFromWidgetItem(final MapView map, WidgetItem item) {
         final Marker m = new Marker(map);
         m.setRelatedObject(item);
         m.setTitle(item.name);
         m.setSubDescription(item.address);
-        if(shouldShowIcon)
-            m.setIcon(map.getContext().getResources().getDrawable(R.drawable.marker));
-        else if(!item.isPinned)
+        if(!item.isPinned)
             m.setIcon(map.getContext().getResources().getDrawable(R.drawable.marker_hidden));
         else
             m.setIcon(map.getContext().getResources().getDrawable(R.drawable.marker_hidden_pinned));
@@ -93,49 +57,6 @@ public class OverlayProvider {
         return m;
     }
 
-
-    /**
-     * Pros :
-     * - Easy click/long click actions
-     * Cons :
-     * - Non customizable popup
-     */
-    public static Overlay setItemizedOverlayWithFocus(final MapView map, final ArrayList<WidgetItem> items) {
-        ItemizedOverlayWithFocus<OverlayItem> mOverlay = new ItemizedOverlayWithFocus<>(
-                WidgetItem.toOverlayItems(items),
-                map.getContext().getResources().getDrawable(R.drawable.marker),
-                map.getContext().getResources().getDrawable(R.drawable.marker_selected),
-                OverlayConstants.NOT_SET,
-                new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
-                    @Override
-                    public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
-                        return true;
-                    }
-                    @Override
-                    public boolean onItemLongPress(final int index, final OverlayItem item) {
-                        WidgetItem widget = WidgetItem.getWidgetItemFromOverlayItem(items, item);
-                        if(widget!=null) {
-                            new WidgetItemsDatabase.DatabaseLoader.TogglePinnedItem(map.getContext().getApplicationContext(), widget).start();
-                            return true;
-                        }
-                        return false;
-                    }
-                },
-                map.getContext()
-        );
-        mOverlay.setFocusItemsOnTap(true);
-
-        return mOverlay;
-    }
-
-
-    /**
-     * Pros :
-     * - Very fast to load
-     * Cons :
-     * - No popup integrated
-     * - No icons
-     */
     public static ArrayList<Overlay> setFastOverlay(final MapView map, final ArrayList<WidgetItem> items) {
         ArrayList<Overlay> overlays = new ArrayList<>();
 
@@ -190,7 +111,7 @@ public class OverlayProvider {
             public void onClick(SimpleFastPointOverlay.PointAdapter points, Integer point) {
                 final WidgetItem item = WidgetItem.findByName(items, ((LabelledGeoPoint) points.get(point)).getLabel());
                 if(item!=null) {
-                    final Marker m = getMarkerFromWidgetItem(map, item, false);
+                    final Marker m = getMarkerFromWidgetItem(map, item);
                     map.getOverlays().add(m);
                     m.getInfoWindow().getView().findViewById(R.id.bubble_favorite).setOnClickListener(new View.OnClickListener() {
                         @Override
