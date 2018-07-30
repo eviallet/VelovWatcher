@@ -2,36 +2,46 @@ package com.gueg.velovwidget;
 
 import android.Manifest;
 import android.appwidget.AppWidgetManager;
-import android.arch.persistence.room.RoomDatabase;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
+import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.OverlayItem;
-import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
+import org.osmdroid.views.overlay.OverlayWithIW;
+import org.osmdroid.views.overlay.infowindow.MarkerInfoWindow;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
+import org.osmdroid.views.overlay.simplefastpoint.LabelledGeoPoint;
+import org.osmdroid.views.overlay.simplefastpoint.SimpleFastPointOverlay;
+import org.osmdroid.views.overlay.simplefastpoint.SimpleFastPointOverlayOptions;
+import org.osmdroid.views.overlay.simplefastpoint.SimplePointTheme;
 import org.osmdroid.views.util.constants.OverlayConstants;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class PinsActivity extends AppCompatActivity {
@@ -45,6 +55,8 @@ public class PinsActivity extends AppCompatActivity {
     private int id;
 
     private MapView map;
+    private ArrayList<Overlay> currentMarkersOverlays;
+
 
     private ArrayList<WidgetItem> items = new ArrayList<>();
 
@@ -120,32 +132,18 @@ public class PinsActivity extends AppCompatActivity {
         map.setMultiTouchControls(true);
         map.getOverlays().add(rotation);*/
 
-        //the overlay
-        ItemizedOverlayWithFocus<OverlayItem> mOverlay = new ItemizedOverlayWithFocus<>(
-                WidgetItem.toOverlayItems(items),
-                getResources().getDrawable(R.drawable.marker),
-                getResources().getDrawable(R.drawable.marker_selected),
-                OverlayConstants.NOT_SET,
-                new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
-                    @Override
-                    public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
-                        return true;
-                    }
-                    @Override
-                    public boolean onItemLongPress(final int index, final OverlayItem item) {
-                        WidgetItem widget = WidgetItem.getWidgetItemFromOverlayItem(items, item);
-                        if(widget!=null) {
-                            new WidgetItemsDatabase.DatabaseLoader.TogglePinnedItem(getApplicationContext(), widget).start();
-                            return true;
-                        }
-                        return false;
-                    }
-                },
-                this
-        );
-        mOverlay.setFocusItemsOnTap(true);
+        // Add overlay
+        currentMarkersOverlays = OverlayProvider.setFastOverlay(map, items);
+        map.getOverlays().addAll(currentMarkersOverlays);
+        OverlayProvider.setOnPinsChangedListener(new OverlayProvider.OnPinsChanged() {
+            @Override
+            public void onPinToggled() {
+                map.getOverlays().removeAll(currentMarkersOverlays);
+                currentMarkersOverlays = OverlayProvider.setFastOverlay(map, items);
+                map.getOverlays().addAll(currentMarkersOverlays);
+            }
+        });
 
-        map.getOverlays().add(mOverlay);
 
         // Limit scrollable area
         map.setScrollableAreaLimitDouble(WidgetItem.getBoundaries(items));
@@ -159,6 +157,8 @@ public class PinsActivity extends AppCompatActivity {
         mapController.setZoom(18.0d);
 
     }
+
+
 
     public void onClick(View v) {
         switch (v.getId()) {

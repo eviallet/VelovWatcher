@@ -7,4 +7,11 @@
     <color name="colorLow">#ef5350</color>
     <color name="colorMed">#f9a825</color>
     <color name="colorHig">#8bc34a</color>
+
+    <color name="mapStationsColor">#d32f2f</color>
+    <color name="mapStationsPinnedColor">#8bc34a</color>
+
+
+    <color name="colorBubbleBackground">#FFFFFF</color>
+    <color name="colorBubbleStroke">#F42F34</color>
 </resources>

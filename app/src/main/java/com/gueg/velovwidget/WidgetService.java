@@ -96,6 +96,7 @@ class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory {
         return true;
     }
     public void onDataSetChanged() {
+        Log.d(":-:","WDataprovider - onDataSetChanged");
         mWidgetItems.clear();
         try {
             mWidgetItems.addAll(new WidgetItemsDatabase.DatabaseLoader.PinnedItems().execute(mContext).get());

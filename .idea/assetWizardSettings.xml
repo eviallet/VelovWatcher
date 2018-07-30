@@ -23,7 +23,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_settings_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_favorite_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -33,12 +33,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="assetSourceType" value="FILE" />
-                            <entry key="color" value="ffffff" />
-                            <entry key="outputName" value="ic_places_dispos" />
+                            <entry key="outputName" value="ic_favorite" />
                             <entry key="overrideSize" value="true" />
                             <entry key="sourceFile" value="C:\Users\Gueg\OneDrive\Progra\VelovWidget\app\src\main\res\drawable\places-dispos.svg" />
-                            <entry key="width" value="28" />
                           </map>
                         </option>
                       </PersistentState>

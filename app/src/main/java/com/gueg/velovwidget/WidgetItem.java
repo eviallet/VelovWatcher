@@ -95,4 +95,11 @@ public class WidgetItem {
         return new BoundingBox(latMax, lngMax, latMin, lngMin);
     }
 
+    public static WidgetItem findByName(ArrayList<WidgetItem> items, String name) {
+        for(WidgetItem item : items)
+            if(item.name.equals(name))
+                return item;
+        return null;
+    }
+
 }

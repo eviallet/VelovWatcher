@@ -81,7 +81,6 @@ public abstract class WidgetItemsDatabase extends RoomDatabase {
             public void run() {
                 item.isPinned = !item.isPinned;
                 WidgetItemsDatabase.getDatabase(c.getApplicationContext()).widgetItemsDao().updateItems(item);
-                Toast.makeText(c.getApplicationContext(), "Item "+item.name+(item.isPinned?" pinned":" unpinned"), Toast.LENGTH_SHORT).show();
             }
         }
     }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape android:shape="rectangle"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+    <solid android:color="@color/colorBubbleBackground"/>
+    <stroke android:color="@color/colorBubbleStroke" />
+    <corners android:radius="10dp" />
+    <size android:width="75dp" android:height="50dp" />
+</shape>

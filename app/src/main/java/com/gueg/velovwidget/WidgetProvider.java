@@ -64,6 +64,9 @@ public class WidgetProvider extends AppWidgetProvider {
             views.setTextViewText(R.id.widget_update_text,
                     context.getResources().getString(R.string.widget_last_udpate_time)+" "+new SimpleDateFormat("HH:mm", Locale.getDefault()).format(Calendar.getInstance().getTime()));
 
+            // Update stations info (trigger WidgetDataProvider.onDataSetChanged)
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.widget_list_stations);
+
             // Updating widget
             appWidgetManager.updateAppWidget(appWidgetId, views);
         }
