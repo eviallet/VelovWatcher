@@ -20,6 +20,8 @@ import java.util.ArrayList;
 
 public class OverlayProvider {
 
+    private static Marker CURRENT_INFOWINDOW = null;
+
     private static Marker getMarkerFromWidgetItem(final MapView map, WidgetItem item) {
         final Marker m = new Marker(map);
         m.setRelatedObject(item);
@@ -131,6 +133,10 @@ public class OverlayProvider {
                     if (item.isPinned)
                         ((ImageView) m.getInfoWindow().getView().findViewById(R.id.bubble_favorite)).setImageDrawable(map.getContext().getResources().getDrawable(R.drawable.ic_favorite));
                     m.showInfoWindow();
+
+                    if(CURRENT_INFOWINDOW!=null)
+                        CURRENT_INFOWINDOW.closeInfoWindow();
+                    CURRENT_INFOWINDOW = m;
                 }
             }
         };
