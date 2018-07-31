@@ -11,7 +11,6 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -23,10 +22,21 @@ public class WidgetProvider extends AppWidgetProvider {
     @Override
     public void onReceive(final Context context, final Intent intent) {
         super.onReceive(context, intent);
-        if (intent.getAction()!=null&&intent.getAction().equals(STATION_CLICK_ACTION)) {
-            final int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
-            final int viewIndex = intent.getIntExtra(STATION_INDEX_EXTRA, 0);
-            Toast.makeText(context, "Touched " + viewIndex, Toast.LENGTH_SHORT).show();
+        if(intent.getAction()==null)
+            return;
+        switch(intent.getAction()) {
+            case STATION_CLICK_ACTION:
+                final int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+                final int viewIndex = intent.getIntExtra(STATION_INDEX_EXTRA, 0);
+                Toast.makeText(context, "Touched " + viewIndex, Toast.LENGTH_SHORT).show();
+                break;
+            case Intent.ACTION_BOOT_COMPLETED:
+                intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+                super.onReceive(context,intent);
+                break;
+            default:
+                break;
+
         }
     }
 

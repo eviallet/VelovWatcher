@@ -34,11 +34,14 @@ class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory {
             @Override
             public void run() {
                 Room.databaseBuilder(mContext, WidgetItemsDatabase.class, "widget_items").build();
+                mWidgetItems.clear();
+                try {
+                    mWidgetItems.addAll(new WidgetItemsDatabase.DatabaseLoader.PinnedItems().execute(mContext).get());
+                } catch (ExecutionException|InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }).start();
-        // In onCreate() you setup any connections / cursors to your data source.
-        //for (int i = 0; i < mCount; i++)
-        //    mWidgetItems.add(new WidgetItem(i + "!"));
     }
     public void onDestroy() {
         // In onDestroy() you should tear down anything that was setup for your data source,
