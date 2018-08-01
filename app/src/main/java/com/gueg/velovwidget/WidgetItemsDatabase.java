@@ -5,16 +5,13 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.gueg.velovwidget.WidgetItem.DATABASE_NAME;
 
-@Database(entities = {WidgetItem.class}, version = 2)
+@Database(entities = {WidgetItem.class}, version = 2, exportSchema = false)
 public abstract class WidgetItemsDatabase extends RoomDatabase {
 
     public abstract WidgetItemsDao widgetItemsDao();
@@ -39,17 +36,17 @@ public abstract class WidgetItemsDatabase extends RoomDatabase {
 
     public static class DatabaseLoader {
 
-        public static class AllItems extends AsyncTask<Context, Void, ArrayList<WidgetItem>> {
+        public static class AllItems extends AsyncTask<Object, Void, ArrayList<WidgetItem>> {
             @Override
-            protected ArrayList<WidgetItem> doInBackground(Context... contexts) {
-                return new ArrayList<>(WidgetItemsDatabase.getDatabase(contexts[0]).widgetItemsDao().getAll());
+            protected final ArrayList<WidgetItem> doInBackground(Object... objs) {
+                return new ArrayList<>(WidgetItemsDatabase.getDatabase((Context)objs[0]).widgetItemsDao().getAll((String)objs[1]));
             }
         }
 
-        public static class PinnedItems extends AsyncTask<Context, Void, ArrayList<WidgetItem>> {
+        public static class PinnedItems extends AsyncTask<Object, Void, ArrayList<WidgetItem>> {
             @Override
-            protected ArrayList<WidgetItem> doInBackground(Context... contexts) {
-                return new ArrayList<>(WidgetItemsDatabase.getDatabase(contexts[0]).widgetItemsDao().getAllPinned());
+            protected final ArrayList<WidgetItem> doInBackground(Object... objs){
+                return new ArrayList<>(WidgetItemsDatabase.getDatabase((Context)objs[0]).widgetItemsDao().getAllPinned((String)objs[1]));
             }
         }
 

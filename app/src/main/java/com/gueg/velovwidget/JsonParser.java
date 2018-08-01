@@ -5,13 +5,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializer;
 import com.google.gson.reflect.TypeToken;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,16 +16,20 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.ExecutionException;
 
 public class JsonParser {
 
-    public static final String CONTRACT_NAME_LYON = "Lyon";
+    private static final String API_URL_CONTRACT_LIST = "https://api.jcdecaux.com/vls/v1/contracts?&apiKey={api_key}";
     private static final String API_URL_UPDATE_STATION = "https://api.jcdecaux.com/vls/v1/stations/{station_number}?contract={contract_name}&apiKey={api_key}";
+    private static final String API_URL_GET_STATIONS = "https://api.jcdecaux.com/vls/v1/stations?contract={contract_name}&apiKey={api_key}";
     private static final String API_SCHEME_STATION_NUMBER = "{station_number}";
     private static final String API_SCHEME_CONTRACT_NAME = "{contract_name}";
     private static final String API_SCHEME_API_KEY = "{api_key}";
     private static String API_KEY;
     public static boolean IS_API_KEY_LOADED = false;
+
+
 
     public static void loadApiKey(Context context) {
         try {
@@ -50,32 +48,151 @@ public class JsonParser {
         }
     }
 
-    public static WidgetItem updateDynamicalDataFromApi(WidgetItem item) {
-        return new UpdateItemTask().doInBackground(item);
+
+
+
+
+
+    private static ArrayList<String> loadContractsFromJson(String json) {
+        ArrayList<Contract> contracts = new Gson().fromJson(json, new TypeToken<Collection<Contract>>(){}.getType());
+        ArrayList<String> res = new ArrayList<>(contracts.size());
+        for(Contract c : contracts)
+            res.add(c.name);
+        return res;
     }
 
-    public static ArrayList<WidgetItem> loadFromJson(Context context) {
-        ArrayList<WidgetItem> items = new ArrayList<>();
-        try {
-            InputStream in = context.getAssets().open("Lyon.json");
-            BufferedReader r = new BufferedReader(new InputStreamReader(in));
-            StringBuilder total = new StringBuilder();
-            String line;
-            while ((line = r.readLine()) != null) {
-                total.append(line).append('\n');
-            }
-            items.addAll((ArrayList<WidgetItem>)new Gson().fromJson(total.toString(), new TypeToken<Collection<WidgetItem>>(){}.getType()));
+    public static class GetContractList extends AsyncTask<Void, Void, ArrayList<String>> {
+        @Override
+        public ArrayList<String> doInBackground(Void... voids) {
+            HttpURLConnection connection = null;
+            BufferedReader reader = null;
 
-            for(WidgetItem item : items)
-                item.name = item.name.substring(item.name.indexOf("-")+1);
-        } catch (IOException e) {
+            try {
+                URL url = new URL(API_URL_CONTRACT_LIST.replace(API_SCHEME_API_KEY, API_KEY));
+                connection = (HttpURLConnection) url.openConnection();
+                connection.connect();
+
+
+                InputStream stream = connection.getInputStream();
+
+                reader = new BufferedReader(new InputStreamReader(stream));
+
+                StringBuilder buffer = new StringBuilder();
+                String line;
+
+                while ((line = reader.readLine()) != null)
+                    buffer.append(line).append("\n");
+
+                Log.d(":-:","GetContractsList - Loaded "+loadContractsFromJson(buffer.toString()).size()+" contracts");
+
+                return loadContractsFromJson(buffer.toString());
+
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+                try {
+                    if (reader != null) {
+                        reader.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+    }
+
+
+    private class Contract {
+        public String name;
+    }
+
+
+
+
+
+
+
+
+
+
+    public static ArrayList<WidgetItem> loadStationsFromContract(String contract) {
+        ArrayList<WidgetItem> items = null;
+        try {
+            items = new Gson().fromJson(
+                    new GetStationsJsonFromContract().execute(contract).get(),
+                    new TypeToken<Collection<WidgetItem>>() {
+                    }.getType());
+
+            for (WidgetItem item : items) {
+                if(item.name.contains("-"))
+                    item.name = item.name.substring(item.name.indexOf("-") + 1);
+            }
+        } catch (ExecutionException|InterruptedException e) {
             e.printStackTrace();
         }
         return items;
     }
 
-    private static DynamicData loadDynamicDataFromJson(String data) {
-        return new Gson().fromJson(data, new TypeToken<DynamicData>(){}.getType());
+    public static class GetStationsJsonFromContract extends AsyncTask<String, Void, String> {
+        @Override
+        public String doInBackground(String... strings) {
+            HttpURLConnection connection = null;
+            BufferedReader reader = null;
+
+            try {
+                URL url = new URL(API_URL_GET_STATIONS.replace(API_SCHEME_API_KEY, API_KEY).replace(API_SCHEME_CONTRACT_NAME, strings[0]));
+                connection = (HttpURLConnection) url.openConnection();
+                connection.connect();
+
+
+                InputStream stream = connection.getInputStream();
+
+                reader = new BufferedReader(new InputStreamReader(stream));
+
+                StringBuilder buffer = new StringBuilder();
+                String line;
+
+                while ((line = reader.readLine()) != null)
+                    buffer.append(line).append("\n");
+
+
+                return buffer.toString();
+
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+                try {
+                    if (reader != null) {
+                        reader.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+    }
+
+
+
+
+
+
+    public static WidgetItem updateDynamicDataFromApi(WidgetItem item) {
+        return new UpdateItemTask().doInBackground(item);
     }
 
     // https://stackoverflow.com/a/37525989/8308507
@@ -100,10 +217,8 @@ public class JsonParser {
                 StringBuilder buffer = new StringBuilder();
                 String line;
 
-                while ((line = reader.readLine()) != null) {
+                while ((line = reader.readLine()) != null)
                     buffer.append(line).append("\n");
-                    Log.d("Response: ", "> " + line);
-                }
 
                 item.data = loadDynamicDataFromJson(buffer.toString());
 
@@ -127,10 +242,14 @@ public class JsonParser {
         }
     }
 
+    private static DynamicData loadDynamicDataFromJson(String data) {
+        return new Gson().fromJson(data, new TypeToken<DynamicData>(){}.getType());
+    }
+
     private static String completeFields(WidgetItem item) {
         return API_URL_UPDATE_STATION
                 .replace(API_SCHEME_STATION_NUMBER,Integer.toString(item.number))
-                .replace(API_SCHEME_CONTRACT_NAME,CONTRACT_NAME_LYON)
+                .replace(API_SCHEME_CONTRACT_NAME,item.contract_name)
                 .replace(API_SCHEME_API_KEY,API_KEY);
     }
 

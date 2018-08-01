@@ -1,6 +1,7 @@
 package com.gueg.velovwidget;
 
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -32,7 +33,7 @@ public class OverlayProvider {
         else
             m.setIcon(map.getContext().getResources().getDrawable(R.drawable.marker_hidden_pinned));
 
-        m.setPosition(new GeoPoint(item.latitude, item.longitude));
+        m.setPosition(new GeoPoint(item.position.lat, item.position.lng));
         m.setInfoWindow(new MarkerInfoWindow(R.layout.map_info_window, map));
         m.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
             @Override
@@ -65,10 +66,11 @@ public class OverlayProvider {
         ArrayList<IGeoPoint> points = new ArrayList<>();
         ArrayList<IGeoPoint> pinned = new ArrayList<>();
         for (WidgetItem item : items) {
+            Log.d(":-:","Item position : "+item.position.lat+" - "+item.position.lng);
             if(!item.isPinned)
-                points.add(new LabelledGeoPoint(item.latitude, item.longitude, item.name));
+                points.add(new LabelledGeoPoint(item.position.lat, item.position.lng, item.name));
             else
-                pinned.add(new LabelledGeoPoint(item.latitude, item.longitude, item.name));
+                pinned.add(new LabelledGeoPoint(item.position.lat, item.position.lng, item.name));
         }
 
         // wrap them in a theme

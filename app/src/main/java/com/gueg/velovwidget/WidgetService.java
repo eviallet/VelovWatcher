@@ -36,7 +36,7 @@ class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory {
                 Room.databaseBuilder(mContext, WidgetItemsDatabase.class, "widget_items").build();
                 mWidgetItems.clear();
                 try {
-                    mWidgetItems.addAll(new WidgetItemsDatabase.DatabaseLoader.PinnedItems().execute(mContext).get());
+                    mWidgetItems.addAll(new WidgetItemsDatabase.DatabaseLoader.PinnedItems().execute(mContext, WidgetItem.getSelectedContract(mContext)).get());
                 } catch (ExecutionException|InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -54,7 +54,7 @@ class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory {
     public RemoteViews getViewAt(int position) {
         Log.d(":-:","WService - getViewAt "+position);
 
-        WidgetItem item = JsonParser.updateDynamicalDataFromApi(mWidgetItems.get(position));
+        WidgetItem item = JsonParser.updateDynamicDataFromApi(mWidgetItems.get(position));
         mWidgetItems.remove(position);
         mWidgetItems.add(position, item);
 
@@ -102,7 +102,7 @@ class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory {
         Log.d(":-:","WDataprovider - onDataSetChanged");
         mWidgetItems.clear();
         try {
-            mWidgetItems.addAll(new WidgetItemsDatabase.DatabaseLoader.PinnedItems().execute(mContext).get());
+            mWidgetItems.addAll(new WidgetItemsDatabase.DatabaseLoader.PinnedItems().execute(mContext, WidgetItem.getSelectedContract(mContext)).get());
         } catch (ExecutionException|InterruptedException e) {
             e.printStackTrace();
         }

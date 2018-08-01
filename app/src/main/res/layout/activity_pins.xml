@@ -1,23 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-
     <org.osmdroid.views.MapView android:id="@+id/activity_pins_map"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
-    <Button
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/activity_pins_confirm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
         android:onClick="onClick"
-        android:text="@string/widget_confirm"
+        android:longClickable="true"
+        android:src="@drawable/ic_check"
+        android:tint="@color/colorTextWhite"
+        fab:backgroundTint="@color/colorHig"
+        fab:fabSize="normal"
 
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_margin="10dp"/>
+        android:layout_margin="16dp"/>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/activity_pins_change_city"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:onClick="onClick"
+        android:longClickable="true"
+        android:src="@drawable/ic_city"
+        fab:backgroundTint="@color/colorTextWhite"
+        fab:fabSize="mini"
+
+        android:layout_above="@id/activity_pins_confirm"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp"/>
 </RelativeLayout>

@@ -1,5 +1,9 @@
 <resources>
     <string name="widget_title">Vélo\'v watcher</string>
-    <string name="widget_confirm">Valider</string>
     <string name="widget_last_udpate_time">Dernière actualisation : </string>
+
+    <string name="menu_confirm">Valider</string>
+    <string name="menu_change_city">Changer de ville</string>
+
+    <string name="toast_no_station_found">Aucune station trouvée.</string>
 </resources>
