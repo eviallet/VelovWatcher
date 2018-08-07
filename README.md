@@ -9,6 +9,3 @@ Anddroid homescreen widget to keep an eye on JCDecaux's Cyclocity stations. Usin
 * Ability to choose from any affiliated city in the world
 * Refresh data every 30mn, or when the update button is pressedx
 * Configure pinned stations/change current city at any time
-
-# TODO
-* Sometimes, the widget won't refresh or show anything and randomly works again. Issue seems to appear mainly at reboot.
