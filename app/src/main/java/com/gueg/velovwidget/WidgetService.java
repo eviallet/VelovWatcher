@@ -65,6 +65,8 @@ class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory {
 
         RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_item);
         rv.setTextViewText(R.id.widget_item_title, mWidgetItems.get(position).name);
+        if(!item.isOpen())
+            rv.setTextColor(R.id.widget_item_title, mContext.getResources().getColor(R.color.colorLow));
 
         // Available bikes
         rv.setTextViewText(R.id.widget_item_available_bikes, ""+mWidgetItems.get(position).data.available_bikes);
