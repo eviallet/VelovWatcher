@@ -140,6 +140,7 @@ public class PinsActivity extends AppCompatActivity {
         // Map configuration
         Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
         map.setMultiTouchControls(true);
+        map.setBuiltInZoomControls(false);
         map.setTileSource(TileSourceFactory.MAPNIK);
 
         // Position overlay
