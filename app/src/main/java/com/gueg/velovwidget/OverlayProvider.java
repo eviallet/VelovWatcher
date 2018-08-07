@@ -1,7 +1,6 @@
 package com.gueg.velovwidget;
 
 import android.graphics.Paint;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -66,7 +65,6 @@ public class OverlayProvider {
         ArrayList<IGeoPoint> points = new ArrayList<>();
         ArrayList<IGeoPoint> pinned = new ArrayList<>();
         for (WidgetItem item : items) {
-            Log.d(":-:","Item position : "+item.position.lat+" - "+item.position.lng);
             if(!item.isPinned)
                 points.add(new LabelledGeoPoint(item.position.lat, item.position.lng, item.name));
             else

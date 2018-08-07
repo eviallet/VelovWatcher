@@ -1,9 +1,11 @@
 package com.gueg.velovwidget;
 
+import android.appwidget.AppWidgetManager;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -20,13 +22,15 @@ public class WidgetService extends RemoteViewsService {
 class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory {
     private ArrayList<WidgetItem> mWidgetItems = new ArrayList<>();
     private Context mContext;
-    //private int mAppWidgetId;
+    private int progress;
+    private boolean progressShowing = false;
+    private int mAppWidgetId;
 
 
     public WidgetDataProvider(Context context, Intent intent) {
         mContext = context;
-        //mAppWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
-        //        AppWidgetManager.INVALID_APPWIDGET_ID);
+        mAppWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
+                AppWidgetManager.INVALID_APPWIDGET_ID);
 
     }
     public void onCreate() {
@@ -53,6 +57,7 @@ class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory {
     }
     public RemoteViews getViewAt(int position) {
         Log.d(":-:","WService - getViewAt "+position);
+
 
         WidgetItem item = JsonParser.updateDynamicDataFromApi(mWidgetItems.get(position));
         mWidgetItems.remove(position);
@@ -84,6 +89,11 @@ class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory {
         rv.setOnClickFillInIntent(R.id.widget_item_title, new Intent().putExtra(WidgetProvider.STATION_INDEX_EXTRA, position));
 
 
+        // Progress animation
+        progress++;
+        onProgressChanged();
+
+
         return rv;
     }
     public RemoteViews getLoadingView() {
@@ -102,10 +112,33 @@ class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory {
         Log.d(":-:","WDataprovider - onDataSetChanged");
         mWidgetItems.clear();
         try {
+            progress = 0;
             mWidgetItems.addAll(new WidgetItemsDatabase.DatabaseLoader.PinnedItems().execute(mContext, WidgetItem.getSelectedContract(mContext)).get());
+            onProgressChanged();
         } catch (ExecutionException|InterruptedException e) {
             e.printStackTrace();
         }
+    }
+    private void onProgressChanged() {
+        boolean changeMade = false;
+        RemoteViews widget = new RemoteViews(mContext.getPackageName(), R.layout.widget_list);
+        if(progress==mWidgetItems.size()) {
+            if(!progressShowing) {
+                widget.setViewVisibility(R.id.widget_header_update, View.INVISIBLE);
+                widget.setViewVisibility(R.id.widget_header_update_animation, View.VISIBLE);
+                progressShowing = true;
+                changeMade = true;
+            }
+        } else {
+            if(progressShowing) {
+                widget.setViewVisibility(R.id.widget_header_update, View.VISIBLE);
+                widget.setViewVisibility(R.id.widget_header_update_animation, View.INVISIBLE);
+                progressShowing = false;
+                changeMade = true;
+            }
+        }
+        if(changeMade)
+            AppWidgetManager.getInstance(mContext).updateAppWidget(mAppWidgetId, widget);
     }
 
 
