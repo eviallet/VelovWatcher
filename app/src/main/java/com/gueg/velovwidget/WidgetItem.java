@@ -20,6 +20,9 @@ public class WidgetItem {
     public static final String CONTRACT_NAME = "com.gueg.velovwatcher.sharedprefs.contract_name";
     public static final String NO_CONTRACT_NAME = "com.gueg.velovwatcher.sharedprefs.contract_name.none";
 
+    private static final String STATUS_OPEN = "OPEN";
+    private static final String STATUS_CLOSED = "CLOSED";
+
     @NonNull
     public Integer number;
     public String contract_name;
@@ -44,6 +47,10 @@ public class WidgetItem {
         this.position = position;
         this.isPinned = isPinned;
         this.rank = rank;
+    }
+
+    public boolean isOpen() {
+        return data!=null&&data.status.equals(STATUS_OPEN);
     }
 
 
