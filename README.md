@@ -7,5 +7,5 @@ Anddroid homescreen widget to keep an eye on JCDecaux's Cyclocity stations. Usin
 # Working
 * Parsing real time informations of every pinned station about available bikes/bike stands
 * Ability to choose from any affiliated city in the world
-* Refresh data every 30mn, or when the update button is pressedx
+* Refresh data every 30mn, or when the update button is pressed
 * Configure pinned stations/change current city at any time
