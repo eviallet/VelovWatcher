@@ -80,5 +80,23 @@ public abstract class WidgetItemsDatabase extends RoomDatabase {
                 WidgetItemsDatabase.getDatabase(c.getApplicationContext()).widgetItemsDao().updateItems(item);
             }
         }
+
+        public static class RankPinnedItem extends Thread {
+            Context c;
+            WidgetItem item;
+            int rank;
+
+            RankPinnedItem(Context c, WidgetItem item, int rank) {
+                this.c = c;
+                this.item = item;
+                this.rank = rank;
+            }
+
+            @Override
+            public void run() {
+                item.rank = rank;
+                WidgetItemsDatabase.getDatabase(c.getApplicationContext()).widgetItemsDao().updateItems(item);
+            }
+        }
     }
 }

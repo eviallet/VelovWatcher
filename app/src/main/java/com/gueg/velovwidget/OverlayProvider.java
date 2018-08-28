@@ -1,7 +1,9 @@
 package com.gueg.velovwidget;
 
+import android.annotation.SuppressLint;
 import android.graphics.Paint;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -22,7 +24,7 @@ public class OverlayProvider {
 
     private static Marker CURRENT_INFOWINDOW = null;
 
-    private static Marker getMarkerFromWidgetItem(final MapView map, WidgetItem item) {
+    private static Marker getMarkerFromWidgetItem(final MapView map, final WidgetItem item) {
         final Marker m = new Marker(map);
         m.setRelatedObject(item);
         m.setTitle(item.name);
@@ -35,6 +37,7 @@ public class OverlayProvider {
         m.setPosition(new GeoPoint(item.position.lat, item.position.lng));
         m.setInfoWindow(new MarkerInfoWindow(R.layout.map_info_window, map));
         m.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public boolean onMarkerClick(Marker marker, MapView mapView) {
                 marker.getInfoWindow().getView().findViewById(R.id.bubble_favorite).setOnClickListener(new View.OnClickListener() {
@@ -50,6 +53,7 @@ public class OverlayProvider {
                             ((ImageView)m.getInfoWindow().getView().findViewById(R.id.bubble_favorite)).setImageDrawable(map.getContext().getResources().getDrawable(R.drawable.ic_favorite_border));
                     }
                 });
+                ((EditText)marker.getInfoWindow().getView().findViewById(R.id.bubble_rank)).setText(Integer.toString(item.rank));
                 marker.showInfoWindow();
                 return true;
             }
@@ -128,6 +132,16 @@ public class OverlayProvider {
                                 ((ImageView) m.getInfoWindow().getView().findViewById(R.id.bubble_favorite)).setImageDrawable(map.getContext().getResources().getDrawable(R.drawable.ic_favorite_border));
 
                             _listener.onPinToggled();
+                        }
+                    });
+                    m.getInfoWindow().getView().findViewById(R.id.bubble_rank_confirm).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            WidgetItem wi = (WidgetItem) m.getRelatedObject();
+                            String txt;
+                            int rank = Integer.decode(((txt=(((EditText)m.getInfoWindow().getView().findViewById(R.id.bubble_rank)).getText().toString())).isEmpty())?"-1":txt);
+                            new WidgetItemsDatabase.DatabaseLoader.RankPinnedItem(map.getContext().getApplicationContext(), wi, rank).start();
+                            Toast.makeText(map.getContext().getApplicationContext(), "Station " + wi.name.toLowerCase() + " classée "+ rank, Toast.LENGTH_SHORT).show();
                         }
                     });
                     if (item.isPinned)

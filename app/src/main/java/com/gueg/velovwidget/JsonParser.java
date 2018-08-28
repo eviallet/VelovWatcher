@@ -133,6 +133,7 @@ public class JsonParser {
             for (WidgetItem item : items) {
                 if(item.name.contains("-"))
                     item.name = item.name.substring(item.name.indexOf("-") + 1);
+                item.rank = -1;
             }
         } catch (ExecutionException|InterruptedException e) {
             e.printStackTrace();

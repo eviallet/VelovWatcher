@@ -6,10 +6,13 @@ import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import org.osmdroid.util.BoundingBox;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import static com.gueg.velovwidget.WidgetItem.DATABASE_NAME;
 
@@ -77,6 +80,27 @@ public class WidgetItem {
                 lngMax = item.position.lng;
         }
         return new BoundingBox(latMax, lngMax, latMin, lngMin);
+    }
+
+    // https://stackoverflow.com/a/36595905/8308507
+    public static ArrayList<WidgetItem> sort(ArrayList<WidgetItem> items) {
+        Log.d(":-:","======== Before");
+        printOrder(items);
+        Collections.sort(items, new Comparator<WidgetItem>() {
+            @Override public int compare(WidgetItem w1, WidgetItem w2) {
+                if(w1.rank==-1&&w2.rank!=-1)
+                    return 1;
+                return w1.rank - w2.rank; // Ascending
+            }
+        });
+        Log.d(":-:","======== After");
+        printOrder(items);
+        return items;
+    }
+
+    private static void printOrder(ArrayList<WidgetItem> items) {
+        for(WidgetItem item : items)
+            Log.d(":-:",""+item.rank);
     }
 
     public static WidgetItem findByName(ArrayList<WidgetItem> items, String name) {

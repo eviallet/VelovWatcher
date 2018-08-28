@@ -31,6 +31,8 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
+// TODO warn on low bikes/stands available on chosen hours ?
+
 public class PinsActivity extends AppCompatActivity {
 
 

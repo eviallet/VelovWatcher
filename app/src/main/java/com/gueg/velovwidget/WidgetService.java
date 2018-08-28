@@ -41,6 +41,8 @@ class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory {
                 mWidgetItems.clear();
                 try {
                     mWidgetItems.addAll(new WidgetItemsDatabase.DatabaseLoader.PinnedItems().execute(mContext, WidgetItem.getSelectedContract(mContext)).get());
+                    mWidgetItems = WidgetItem.sort(mWidgetItems);
+                    Log.d(":-:","onCreate - loaded "+mWidgetItems.size());
                 } catch (ExecutionException|InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -111,11 +113,12 @@ class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory {
         return true;
     }
     public void onDataSetChanged() {
-        Log.d(":-:","WDataprovider - onDataSetChanged");
         mWidgetItems.clear();
         try {
             progress = 0;
             mWidgetItems.addAll(new WidgetItemsDatabase.DatabaseLoader.PinnedItems().execute(mContext, WidgetItem.getSelectedContract(mContext)).get());
+            mWidgetItems = WidgetItem.sort(mWidgetItems);
+            Log.d(":-:","WDataprovider - onDataSetChanged - new mWidgetItems size = "+mWidgetItems.size());
             onProgressChanged();
         } catch (ExecutionException|InterruptedException e) {
             e.printStackTrace();
@@ -130,6 +133,7 @@ class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory {
                 widget.setViewVisibility(R.id.widget_header_update_animation, View.VISIBLE);
                 progressShowing = true;
                 changeMade = true;
+                Log.d(":-:","onProgressChanged - showing progress");
             }
         } else {
             if(progressShowing) {
@@ -137,6 +141,7 @@ class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory {
                 widget.setViewVisibility(R.id.widget_header_update_animation, View.INVISIBLE);
                 progressShowing = false;
                 changeMade = true;
+                Log.d(":-:","onProgressChanged - hiding progress");
             }
         }
         if(changeMade)
