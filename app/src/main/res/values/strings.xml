@@ -5,6 +5,10 @@
     <string name="menu_confirm">Valider</string>
     <string name="menu_change_city">Changer de ville</string>
 
+
+    <string name="cancel">Annuler</string>
+    <string name="confirm">Confirmer</string>
+
     <string name="bubble_hint_rank">Rang dans la liste</string>
 
     <string name="toast_no_station_found">Aucune station trouvée.</string>

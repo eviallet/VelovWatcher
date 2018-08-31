@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
 
         android:textColor="@color/colorTextBlack"
+        android:maxLines="1"
         android:textStyle="bold"
         android:textSize="18sp"
 

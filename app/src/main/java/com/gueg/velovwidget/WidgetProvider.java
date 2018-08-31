@@ -87,6 +87,7 @@ public class WidgetProvider extends AppWidgetProvider {
                 views.setEmptyView(R.id.widget_list_stations, R.id.widget_list_empty);
 
                 // Handling header buttons clicks
+                views.setOnClickPendingIntent(R.id.widget_header_sort, PendingIntent.getActivity(context, 0, new Intent(context, SortActivity.class), PendingIntent.FLAG_UPDATE_CURRENT));
                 views.setOnClickPendingIntent(R.id.widget_header_configure, PendingIntent.getActivity(context, 0, new Intent(context, PinsActivity.class).setAction(AppWidgetManager.ACTION_APPWIDGET_CONFIGURE).putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId), PendingIntent.FLAG_UPDATE_CURRENT));
                 views.setOnClickPendingIntent(R.id.widget_header_update, PendingIntent.getBroadcast(context, 0, new Intent().setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE).putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds), PendingIntent.FLAG_UPDATE_CURRENT));
                 views.setOnClickPendingIntent(R.id.widget_header_title, PendingIntent.getBroadcast(context, 0, new Intent().setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE).putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds), PendingIntent.FLAG_UPDATE_CURRENT));

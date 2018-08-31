@@ -34,6 +34,8 @@ public abstract class WidgetItemsDatabase extends RoomDatabase {
         return INSTANCE;
     }
 
+
+
     public static class DatabaseLoader {
 
         public static class AllItems extends AsyncTask<Object, Void, ArrayList<WidgetItem>> {
@@ -81,22 +83,21 @@ public abstract class WidgetItemsDatabase extends RoomDatabase {
             }
         }
 
-        public static class RankPinnedItem extends Thread {
-            Context c;
-            WidgetItem item;
-            int rank;
 
-            RankPinnedItem(Context c, WidgetItem item, int rank) {
+        public static class UpdateItems extends Thread {
+            Context c;
+            ArrayList<WidgetItem> items;
+
+            UpdateItems(Context c, ArrayList<WidgetItem> items) {
                 this.c = c;
-                this.item = item;
-                this.rank = rank;
+                this.items = items;
             }
 
             @Override
             public void run() {
-                item.rank = rank;
-                WidgetItemsDatabase.getDatabase(c.getApplicationContext()).widgetItemsDao().updateItems(item);
+                WidgetItemsDatabase.getDatabase(c.getApplicationContext()).widgetItemsDao().updateItems(items.toArray(new WidgetItem[items.size()]));
             }
         }
     }
+
 }

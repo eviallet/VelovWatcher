@@ -3,7 +3,6 @@ package com.gueg.velovwidget;
 import android.annotation.SuppressLint;
 import android.graphics.Paint;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -53,7 +52,6 @@ public class OverlayProvider {
                             ((ImageView)m.getInfoWindow().getView().findViewById(R.id.bubble_favorite)).setImageDrawable(map.getContext().getResources().getDrawable(R.drawable.ic_favorite_border));
                     }
                 });
-                ((EditText)marker.getInfoWindow().getView().findViewById(R.id.bubble_rank)).setText(Integer.toString(item.rank));
                 marker.showInfoWindow();
                 return true;
             }
@@ -132,16 +130,6 @@ public class OverlayProvider {
                                 ((ImageView) m.getInfoWindow().getView().findViewById(R.id.bubble_favorite)).setImageDrawable(map.getContext().getResources().getDrawable(R.drawable.ic_favorite_border));
 
                             _listener.onPinToggled();
-                        }
-                    });
-                    m.getInfoWindow().getView().findViewById(R.id.bubble_rank_confirm).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            WidgetItem wi = (WidgetItem) m.getRelatedObject();
-                            String txt;
-                            int rank = Integer.decode(((txt=(((EditText)m.getInfoWindow().getView().findViewById(R.id.bubble_rank)).getText().toString())).isEmpty())?"-1":txt);
-                            new WidgetItemsDatabase.DatabaseLoader.RankPinnedItem(map.getContext().getApplicationContext(), wi, rank).start();
-                            Toast.makeText(map.getContext().getApplicationContext(), "Station " + wi.name.toLowerCase() + " classée "+ rank, Toast.LENGTH_SHORT).show();
                         }
                     });
                     if (item.isPinned)
