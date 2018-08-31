@@ -4,7 +4,6 @@ import android.appwidget.AppWidgetManager;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -45,7 +44,6 @@ class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory {
                 try {
                     mWidgetItems.addAll(new WidgetItemsDatabase.DatabaseLoader.PinnedItems().execute(mContext, WidgetItem.getSelectedContract(mContext)).get());
                     mWidgetItems = WidgetItem.sort(mWidgetItems);
-                    Log.d(":-:","onCreate - loaded "+mWidgetItems.size());
                 } catch (ExecutionException|InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -61,8 +59,6 @@ class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory {
         return mWidgetItems.size();
     }
     public RemoteViews getViewAt(int position) {
-        Log.d(":-:","WService - getViewAt "+position);
-
 
         WidgetItem item = JsonParser.updateDynamicDataFromApi(mWidgetItems.get(position));
         mWidgetItems.remove(position);
@@ -121,7 +117,6 @@ class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory {
             progress = 0;
             mWidgetItems.addAll(new WidgetItemsDatabase.DatabaseLoader.PinnedItems().execute(mContext, WidgetItem.getSelectedContract(mContext)).get());
             mWidgetItems = WidgetItem.sort(mWidgetItems);
-            Log.d(":-:","WDataprovider - onDataSetChanged - new mWidgetItems size = "+mWidgetItems.size());
             onProgressChanged();
         } catch (ExecutionException|InterruptedException e) {
             e.printStackTrace();
@@ -136,7 +131,6 @@ class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory {
                 widget.setViewVisibility(R.id.widget_header_update_animation, View.VISIBLE);
                 progressShowing = true;
                 changeMade = true;
-                Log.d(":-:","onProgressChanged - showing progress");
             }
         } else {
             if(progressShowing) {
@@ -144,7 +138,6 @@ class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory {
                 widget.setViewVisibility(R.id.widget_header_update_animation, View.INVISIBLE);
                 progressShowing = false;
                 changeMade = true;
-                Log.d(":-:","onProgressChanged - hiding progress");
             }
         }
         if(changeMade)

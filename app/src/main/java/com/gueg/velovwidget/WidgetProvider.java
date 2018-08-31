@@ -10,7 +10,6 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.gueg.velovwidget.database_stations.JsonParser;
@@ -56,8 +55,6 @@ public class WidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        Log.d(":-:","WProvider - onUpdate");
-
         if(!_isConfig) {
             _appWidgetIds = appWidgetIds;
             _appWidgetManager = appWidgetManager;
@@ -74,8 +71,6 @@ public class WidgetProvider extends AppWidgetProvider {
 
         if(!JsonParser.IS_API_KEY_LOADED)
             JsonParser.loadApiKey(context);
-
-        Log.d(":-:","WProvider - isConnected = "+isConnected);
 
         if(isConnected) {
 
@@ -120,14 +115,12 @@ public class WidgetProvider extends AppWidgetProvider {
 
 
     private void init(Context context) {
-        Log.d(":-:","WProvider - init");
         _isConfig = true;
 
         context.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if(!intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY,false)) {
-                    Log.d(":-:", "WProvider - connectivity changed");
                     onUpdate(context, _appWidgetManager, _appWidgetIds);
                 }
             }

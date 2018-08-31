@@ -48,7 +48,12 @@ public class OverlayProvider {
                     public void onClick(View view) {
                         WidgetItem wi = (WidgetItem)m.getRelatedObject();
                         new WidgetItemsDatabase.DatabaseLoader.TogglePinnedItem(map.getContext().getApplicationContext(), wi).start();
-                        Toast.makeText(map.getContext().getApplicationContext(), "Station "+wi.name.toLowerCase()+(wi.isPinned?" supprimée.":" suivie."), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(map.getContext().getApplicationContext(), map.getContext().getResources().getString(R.string.overlay_station)
+                                +" "+wi.name.toLowerCase()+" "+
+                                        (wi.isPinned?
+                                                map.getContext().getResources().getString(R.string.overlay_unpinned):
+                                                map.getContext().getResources().getString(R.string.overlay_pinned)),
+                                Toast.LENGTH_SHORT).show();
 
                         if(wi.isPinned)
                             ((ImageView)m.getInfoWindow().getView().findViewById(R.id.bubble_favorite)).setImageDrawable(map.getContext().getResources().getDrawable(R.drawable.ic_favorite));
@@ -126,7 +131,12 @@ public class OverlayProvider {
                         public void onClick(View view) {
                             WidgetItem wi = (WidgetItem) m.getRelatedObject();
                             new WidgetItemsDatabase.DatabaseLoader.TogglePinnedItem(map.getContext().getApplicationContext(), wi).start();
-                            Toast.makeText(map.getContext().getApplicationContext(), "Station " + wi.name.toLowerCase() + (wi.isPinned ? " supprimée." : " suivie."), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(map.getContext().getApplicationContext(), map.getContext().getResources().getString(R.string.overlay_station)
+                                            +" "+wi.name.toLowerCase()+" "+
+                                            (wi.isPinned?
+                                                    map.getContext().getResources().getString(R.string.overlay_unpinned):
+                                                    map.getContext().getResources().getString(R.string.overlay_pinned)),
+                                    Toast.LENGTH_SHORT).show();
 
                             if (wi.isPinned)
                                 ((ImageView) m.getInfoWindow().getView().findViewById(R.id.bubble_favorite)).setImageDrawable(map.getContext().getResources().getDrawable(R.drawable.ic_favorite));

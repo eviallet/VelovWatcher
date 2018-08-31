@@ -12,7 +12,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -37,6 +36,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 // TODO warn on low bikes/stands available on chosen hours ?
+// TODO collect stats about available bikes/stands on chosen stations and show results on a small graph on popup ?
 
 public class PinsActivity extends AppCompatActivity {
 
@@ -122,7 +122,6 @@ public class PinsActivity extends AppCompatActivity {
 
         try {
             items.addAll(new WidgetItemsDatabase.DatabaseLoader.AllItems().execute(this, WidgetItem.getSelectedContract(this)).get());
-            Log.d(":-:","PinsActivity - Loaded "+items.size()+" stations from database");
         } catch (ExecutionException |InterruptedException e) {
             e.printStackTrace();
         }
@@ -130,7 +129,6 @@ public class PinsActivity extends AppCompatActivity {
         if(items.size()==0) {
             items.addAll(JsonParser.loadStationsFromContract(WidgetItem.getSelectedContract(this)));
             new WidgetItemsDatabase.DatabaseLoader.WriteItems(this, items).start();
-            Log.d(":-:", "PinsActivity - Loaded " + items.size() + " stations from json");
         }
 
         if(items.size()==0){
@@ -253,8 +251,8 @@ public class PinsActivity extends AppCompatActivity {
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Choisir "+choice+" ?").setPositiveButton("Oui", dialogClickListener)
-                .setNegativeButton("Non", dialogClickListener).show();
+        builder.setMessage(getResources().getString(R.string.activity_pins_choose)+" "+choice+" ?").setPositiveButton(getResources().getString(R.string.yes), dialogClickListener)
+                .setNegativeButton(getResources().getString(R.string.no), dialogClickListener).show();
     }
 
 

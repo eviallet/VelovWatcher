@@ -2,7 +2,6 @@ package com.gueg.velovwidget.database_stations;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -83,8 +82,6 @@ public class JsonParser {
 
                 while ((line = reader.readLine()) != null)
                     buffer.append(line).append("\n");
-
-                Log.d(":-:","GetContractsList - Loaded "+loadContractsFromJson(buffer.toString()).size()+" contracts");
 
                 return loadContractsFromJson(buffer.toString());
 
