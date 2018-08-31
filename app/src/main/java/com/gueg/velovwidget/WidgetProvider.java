@@ -13,6 +13,10 @@ import android.net.Uri;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import com.gueg.velovwidget.database_stations.JsonParser;
+import com.gueg.velovwidget.map.PinsActivity;
+import com.gueg.velovwidget.sorting.SortActivity;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;

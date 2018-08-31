@@ -1,10 +1,12 @@
-package com.gueg.velovwidget;
+package com.gueg.velovwidget.database_stations;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
+
+import com.gueg.velovwidget.WidgetItem;
 
 import java.util.List;
 

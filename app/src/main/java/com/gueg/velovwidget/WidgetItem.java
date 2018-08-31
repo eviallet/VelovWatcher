@@ -7,6 +7,9 @@ import android.content.Context;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
+import com.gueg.velovwidget.database_stations.Converter;
+import com.gueg.velovwidget.database_stations.DynamicData;
+
 import org.osmdroid.util.BoundingBox;
 
 import java.util.ArrayList;
@@ -105,7 +108,7 @@ public class WidgetItem {
         return PreferenceManager.getDefaultSharedPreferences(context).getString(CONTRACT_NAME, NO_CONTRACT_NAME);
     }
 
-    static class Position {
+    public static class Position {
         public double lat;
         public double lng;
     }

@@ -1,4 +1,4 @@
-package com.gueg.velovwidget;
+package com.gueg.velovwidget.database_stations;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.gueg.velovwidget.WidgetItem;
 
 import java.io.BufferedReader;
 import java.io.IOException;

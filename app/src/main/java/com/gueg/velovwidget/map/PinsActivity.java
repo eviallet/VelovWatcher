@@ -1,4 +1,4 @@
-package com.gueg.velovwidget;
+package com.gueg.velovwidget.map;
 
 import android.Manifest;
 import android.appwidget.AppWidgetManager;
@@ -18,6 +18,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.gueg.velovwidget.R;
+import com.gueg.velovwidget.WidgetItem;
+import com.gueg.velovwidget.database_stations.JsonParser;
+import com.gueg.velovwidget.database_stations.WidgetItemsDatabase;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;

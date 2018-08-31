@@ -9,6 +9,9 @@ import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+import com.gueg.velovwidget.database_stations.JsonParser;
+import com.gueg.velovwidget.database_stations.WidgetItemsDatabase;
+
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 

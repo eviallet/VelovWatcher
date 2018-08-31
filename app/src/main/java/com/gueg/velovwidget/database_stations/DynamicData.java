@@ -1,4 +1,4 @@
-package com.gueg.velovwidget;
+package com.gueg.velovwidget.database_stations;
 
 
 public class DynamicData {

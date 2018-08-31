@@ -1,10 +1,12 @@
-package com.gueg.velovwidget;
+package com.gueg.velovwidget.database_stations;
 
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 import android.os.AsyncTask;
+
+import com.gueg.velovwidget.WidgetItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +58,7 @@ public abstract class WidgetItemsDatabase extends RoomDatabase {
             Context c;
             List<WidgetItem> items;
 
-            WriteItems(Context c, List<WidgetItem> items) {
+            public WriteItems(Context c, List<WidgetItem> items) {
                 this.c = c;
                 this.items = items;
             }
@@ -71,7 +73,7 @@ public abstract class WidgetItemsDatabase extends RoomDatabase {
             Context c;
             WidgetItem item;
 
-            TogglePinnedItem(Context c, WidgetItem item) {
+            public TogglePinnedItem(Context c, WidgetItem item) {
                 this.c = c;
                 this.item = item;
             }
@@ -88,7 +90,7 @@ public abstract class WidgetItemsDatabase extends RoomDatabase {
             Context c;
             ArrayList<WidgetItem> items;
 
-            UpdateItems(Context c, ArrayList<WidgetItem> items) {
+            public UpdateItems(Context c, ArrayList<WidgetItem> items) {
                 this.c = c;
                 this.items = items;
             }

@@ -1,10 +1,14 @@
-package com.gueg.velovwidget;
+package com.gueg.velovwidget.map;
 
 import android.annotation.SuppressLint;
 import android.graphics.Paint;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.gueg.velovwidget.R;
+import com.gueg.velovwidget.WidgetItem;
+import com.gueg.velovwidget.database_stations.WidgetItemsDatabase;
 
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.util.GeoPoint;

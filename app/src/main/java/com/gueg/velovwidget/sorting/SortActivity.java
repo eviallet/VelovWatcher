@@ -1,4 +1,4 @@
-package com.gueg.velovwidget;
+package com.gueg.velovwidget.sorting;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -6,6 +6,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
+
+import com.gueg.velovwidget.R;
+import com.gueg.velovwidget.WidgetItem;
+import com.gueg.velovwidget.database_stations.WidgetItemsDatabase;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;

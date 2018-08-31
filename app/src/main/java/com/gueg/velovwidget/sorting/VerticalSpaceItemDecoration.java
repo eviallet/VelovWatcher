@@ -1,4 +1,4 @@
-package com.gueg.velovwidget;
+package com.gueg.velovwidget.sorting;
 
 
 import android.graphics.Rect;

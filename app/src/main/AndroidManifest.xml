@@ -12,13 +12,13 @@
         android:label="@string/widget_title"
         android:supportsRtl="true"
         android:theme="@style/Base.Theme.AppCompat.Light">
-        <activity android:name=".PinsActivity"
+        <activity android:name=".map.PinsActivity"
             android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
-        <activity android:name=".SortActivity" />
+        <activity android:name=".sorting.SortActivity" />
 
         <receiver android:name=".WidgetProvider" >
             <intent-filter>

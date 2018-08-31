@@ -1,4 +1,4 @@
-package com.gueg.velovwidget;
+package com.gueg.velovwidget.sorting;
 
 
 import android.support.annotation.NonNull;
@@ -7,6 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.gueg.velovwidget.R;
+import com.gueg.velovwidget.WidgetItem;
 
 import java.util.ArrayList;
 import java.util.Collections;

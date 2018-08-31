@@ -1,10 +1,11 @@
-package com.gueg.velovwidget;
+package com.gueg.velovwidget.database_stations;
 
 
 import android.arch.persistence.room.TypeConverter;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.gueg.velovwidget.WidgetItem;
 
 public class Converter {
 
