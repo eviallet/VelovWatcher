@@ -65,6 +65,11 @@ public class WidgetItem {
         return "number = "+number+" - name = "+name+" - address = "+address+" - latitude = "+position.lat+" - longitude = "+position.lng+" - isPinned = "+isPinned+" - rank = "+rank;
     }
 
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof WidgetItem && ((WidgetItem) other).name.equals(name) && ((WidgetItem) other).number.equals(number);
+    }
+
     public static BoundingBox getBoundaries(ArrayList<WidgetItem> items) {
         double latMin = items.get(0).position.lat;
         double latMax = items.get(0).position.lat;
@@ -86,6 +91,7 @@ public class WidgetItem {
 
     // https://stackoverflow.com/a/36595905/8308507
     public static ArrayList<WidgetItem> sort(ArrayList<WidgetItem> items) {
+        items = removeDuplicates(items);
         Collections.sort(items, new Comparator<WidgetItem>() {
             @Override public int compare(WidgetItem w1, WidgetItem w2) {
                 if(w1.rank==-1&&w2.rank!=-1)
@@ -93,6 +99,21 @@ public class WidgetItem {
                 return w1.rank - w2.rank; // Ascending
             }
         });
+        return items;
+    }
+
+
+    public static ArrayList<WidgetItem> removeDuplicates(ArrayList<WidgetItem> items) {
+		// TODO why are there duplicates in a first place?
+        for(int i=0; i<items.size(); i++) {
+            for(int j=0; j<items.size(); j++){
+                if(i!=j && items.get(i).equals(items.get(j))) {
+                    items.remove(i);
+                    i=0;
+                    j=0;
+                }
+            }
+        }
         return items;
     }
 
