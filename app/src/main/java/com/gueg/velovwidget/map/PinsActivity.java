@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.gueg.velovwidget.R;
 import com.gueg.velovwidget.WidgetItem;
+import com.gueg.velovwidget.WidgetProvider;
 import com.gueg.velovwidget.database_stations.JsonParser;
 import com.gueg.velovwidget.database_stations.WidgetItemsDatabase;
 
@@ -267,6 +268,7 @@ public class PinsActivity extends AppCompatActivity {
         switch(v.getId()) {
             case R.id.activity_pins_confirm:
                 setResult(RESULT_OK, new Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, id));
+                WidgetProvider.updateWidget(PinsActivity.this);
                 finish();
                 break;
             case R.id.activity_pins_change_city:
