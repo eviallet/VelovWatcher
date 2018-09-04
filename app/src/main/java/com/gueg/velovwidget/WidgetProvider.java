@@ -12,7 +12,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.gueg.velovwidget.database_stations.JsonParser;
@@ -46,21 +45,6 @@ public class WidgetProvider extends AppWidgetProvider {
                 Toast.makeText(context, "Touched " + viewIndex, Toast.LENGTH_SHORT).show();
                 */
                 break;
-            case Intent.ACTION_BOOT_COMPLETED:
-                /*
-                Log.d(":-:","Boot completed");
-                final Handler h = new Handler();
-                h.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.d(":-:","Checking connection...");
-                        if(!isConnected(context))
-                            h.postDelayed(this, 200);
-                        else
-                            intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-                    }
-                }, 200);
-                break;*/
             default:
                 break;
         }
@@ -124,7 +108,6 @@ public class WidgetProvider extends AppWidgetProvider {
         if(cm!=null) {
             NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
             isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-            Log.d(":-:","isConnected = "+isConnected);
         }
         return isConnected;
     }
