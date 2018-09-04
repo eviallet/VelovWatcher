@@ -82,14 +82,14 @@ public class WidgetProvider extends AppWidgetProvider {
             // Parsing views from current widget
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_list);
 
-            if(isConnected(context)) {
+            //if(isConnected(context)) {
                 // Preparing list adapter
                 Intent intent = new Intent(context, WidgetService.class);
                 intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
                 intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
                 views.setRemoteAdapter(R.id.widget_list_stations, intent);
                 views.setEmptyView(R.id.widget_list_stations, R.id.widget_list_empty);
-            }
+            //}
 
             // Handling header buttons clicks
             views.setOnClickPendingIntent(R.id.widget_header_sort, PendingIntent.getActivity(context, 0, new Intent(context, SortActivity.class), PendingIntent.FLAG_UPDATE_CURRENT));
