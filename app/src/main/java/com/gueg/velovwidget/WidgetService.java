@@ -33,7 +33,8 @@ class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory {
         mContext = context;
         mAppWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID);
-
+        if(!JsonParser.IS_API_KEY_LOADED)
+            JsonParser.loadApiKey(mContext);
     }
     public void onCreate() {
         new Thread(new Runnable() {
