@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.gueg.velovwidget.WidgetItem;
+import com.gueg.velovwidget.Item;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -120,15 +120,15 @@ public class JsonParser {
 
 
 
-    public static ArrayList<WidgetItem> loadStationsFromContract(String contract) {
-        ArrayList<WidgetItem> items = null;
+    public static ArrayList<Item> loadStationsFromContract(String contract) {
+        ArrayList<Item> items = null;
         try {
             items = new Gson().fromJson(
                     new GetStationsJsonFromContract().execute(contract).get(),
-                    new TypeToken<Collection<WidgetItem>>() {
+                    new TypeToken<Collection<Item>>() {
                     }.getType());
 
-            for (WidgetItem item : items) {
+            for (Item item : items) {
                 if(item.name.contains("-"))
                     item.name = item.name.substring(item.name.indexOf("-") + 1);
                 item.rank = -1;
@@ -190,15 +190,20 @@ public class JsonParser {
 
 
 
-    public static WidgetItem updateDynamicDataFromApi(WidgetItem item) {
-        return new UpdateItemTask().doInBackground(item);
+    public static Item updateDynamicDataFromApi(Item item) {
+        try {
+            item = new UpdateItemTask().execute(item).get();
+        } catch (ExecutionException|InterruptedException e) {
+            e.printStackTrace();
+        }
+        return item;
     }
 
     // https://stackoverflow.com/a/37525989/8308507
-    private static class UpdateItemTask extends AsyncTask<WidgetItem, Void, WidgetItem> {
+    private static class UpdateItemTask extends AsyncTask<Item, Void, Item> {
         @Override
-        public WidgetItem doInBackground(WidgetItem... items) {
-            WidgetItem item = items[0];
+        public Item doInBackground(Item... items) {
+            Item item = items[0];
 
             HttpURLConnection connection = null;
             BufferedReader reader = null;
@@ -245,7 +250,7 @@ public class JsonParser {
         return new Gson().fromJson(data, new TypeToken<DynamicData>(){}.getType());
     }
 
-    private static String completeFields(WidgetItem item) {
+    private static String completeFields(Item item) {
         return API_URL_UPDATE_STATION
                 .replace(API_SCHEME_STATION_NUMBER,Integer.toString(item.number))
                 .replace(API_SCHEME_CONTRACT_NAME,item.contract_name)

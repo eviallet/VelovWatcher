@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.gueg.velovwidget.R;
-import com.gueg.velovwidget.WidgetItem;
+import com.gueg.velovwidget.Item;
 import com.gueg.velovwidget.database_stations.WidgetItemsDatabase;
 
 import org.osmdroid.api.IGeoPoint;
@@ -27,7 +27,7 @@ public class OverlayProvider {
 
     private static Marker CURRENT_INFOWINDOW = null;
 
-    private static Marker getMarkerFromWidgetItem(final MapView map, final WidgetItem item) {
+    private static Marker getMarkerFromWidgetItem(final MapView map, final Item item) {
         final Marker m = new Marker(map);
         m.setRelatedObject(item);
         m.setTitle(item.name);
@@ -46,7 +46,7 @@ public class OverlayProvider {
                 marker.getInfoWindow().getView().findViewById(R.id.bubble_favorite).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        WidgetItem wi = (WidgetItem)m.getRelatedObject();
+                        Item wi = (Item)m.getRelatedObject();
                         new WidgetItemsDatabase.DatabaseLoader.TogglePinnedItem(map.getContext().getApplicationContext(), wi).start();
                         Toast.makeText(map.getContext().getApplicationContext(), map.getContext().getResources().getString(R.string.overlay_station)
                                 +" "+wi.name.toLowerCase()+" "+
@@ -70,12 +70,12 @@ public class OverlayProvider {
         return m;
     }
 
-    public static ArrayList<Overlay> setFastOverlay(final MapView map, final ArrayList<WidgetItem> items) {
+    public static ArrayList<Overlay> setFastOverlay(final MapView map, final ArrayList<Item> items) {
         ArrayList<Overlay> overlays = new ArrayList<>();
 
         ArrayList<IGeoPoint> points = new ArrayList<>();
         ArrayList<IGeoPoint> pinned = new ArrayList<>();
-        for (WidgetItem item : items) {
+        for (Item item : items) {
             if(!item.isPinned)
                 points.add(new LabelledGeoPoint(item.position.lat, item.position.lng, item.name));
             else
@@ -122,14 +122,14 @@ public class OverlayProvider {
         SimpleFastPointOverlay.OnClickListener listener = new SimpleFastPointOverlay.OnClickListener() {
             @Override
             public void onClick(SimpleFastPointOverlay.PointAdapter points, Integer point) {
-                final WidgetItem item = WidgetItem.findByName(items, ((LabelledGeoPoint) points.get(point)).getLabel());
+                final Item item = Item.findByName(items, ((LabelledGeoPoint) points.get(point)).getLabel());
                 if(item!=null) {
                     final Marker m = getMarkerFromWidgetItem(map, item);
                     map.getOverlays().add(m);
                     m.getInfoWindow().getView().findViewById(R.id.bubble_favorite).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            WidgetItem wi = (WidgetItem) m.getRelatedObject();
+                            Item wi = (Item) m.getRelatedObject();
                             new WidgetItemsDatabase.DatabaseLoader.TogglePinnedItem(map.getContext().getApplicationContext(), wi).start();
                             Toast.makeText(map.getContext().getApplicationContext(), map.getContext().getResources().getString(R.string.overlay_station)
                                             +" "+wi.name.toLowerCase()+" "+

@@ -16,11 +16,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import static com.gueg.velovwidget.WidgetItem.DATABASE_NAME;
+import static com.gueg.velovwidget.Item.DATABASE_NAME;
 
 
 @Entity(tableName = DATABASE_NAME, primaryKeys = {"number", "name"})
-public class WidgetItem {
+public class Item {
     public static final String DATABASE_NAME = "widget_items";
     public static final String CONTRACT_NAME = "com.gueg.velovwatcher.sharedprefs.contract_name";
     public static final String NO_CONTRACT_NAME = "com.gueg.velovwatcher.sharedprefs.contract_name.none";
@@ -44,7 +44,7 @@ public class WidgetItem {
     @Ignore
     public DynamicData data;
 
-    public WidgetItem(@NonNull Integer number, String contract_name, @NonNull String name, String address, Position position, boolean isPinned, int rank) {
+    public Item(@NonNull Integer number, String contract_name, @NonNull String name, String address, Position position, boolean isPinned, int rank) {
         this.number = number;
         this.contract_name = contract_name;
         this.name = name;
@@ -67,16 +67,16 @@ public class WidgetItem {
 
     @Override
     public boolean equals(Object other) {
-        return other instanceof WidgetItem && ((WidgetItem) other).name.equals(name) && ((WidgetItem) other).number.equals(number);
+        return other instanceof Item && ((Item) other).name.equals(name) && ((Item) other).number.equals(number);
     }
 
-    public static BoundingBox getBoundaries(ArrayList<WidgetItem> items) {
+    public static BoundingBox getBoundaries(ArrayList<Item> items) {
         double latMin = items.get(0).position.lat;
         double latMax = items.get(0).position.lat;
         double lngMin = items.get(0).position.lng;
         double lngMax = items.get(0).position.lng;
 
-        for(WidgetItem item : items) {
+        for(Item item : items) {
             if(item.position.lat<latMin)
                 latMin = item.position.lat;
             else if(item.position.lat>latMax)
@@ -90,10 +90,10 @@ public class WidgetItem {
     }
 
     // https://stackoverflow.com/a/36595905/8308507
-    public static ArrayList<WidgetItem> sort(ArrayList<WidgetItem> items) {
+    public static ArrayList<Item> sort(ArrayList<Item> items) {
         items = removeDuplicates(items);
-        Collections.sort(items, new Comparator<WidgetItem>() {
-            @Override public int compare(WidgetItem w1, WidgetItem w2) {
+        Collections.sort(items, new Comparator<Item>() {
+            @Override public int compare(Item w1, Item w2) {
                 if(w1.rank==-1&&w2.rank!=-1)
                     return 1;
                 return w1.rank - w2.rank; // Ascending
@@ -103,7 +103,7 @@ public class WidgetItem {
     }
 
 
-    public static ArrayList<WidgetItem> removeDuplicates(ArrayList<WidgetItem> items) {
+    public static ArrayList<Item> removeDuplicates(ArrayList<Item> items) {
 		// TODO why are there duplicates in a first place?
         for(int i=0; i<items.size(); i++) {
             for(int j=0; j<items.size(); j++){
@@ -118,8 +118,8 @@ public class WidgetItem {
     }
 
 
-    public static WidgetItem findByName(ArrayList<WidgetItem> items, String name) {
-        for(WidgetItem item : items)
+    public static Item findByName(ArrayList<Item> items, String name) {
+        for(Item item : items)
             if(item.name.equals(name))
                 return item;
         return null;

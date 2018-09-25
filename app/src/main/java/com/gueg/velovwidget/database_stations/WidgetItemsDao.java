@@ -6,28 +6,28 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
-import com.gueg.velovwidget.WidgetItem;
+import com.gueg.velovwidget.Item;
 
 import java.util.List;
 
-import static com.gueg.velovwidget.WidgetItem.DATABASE_NAME;
+import static com.gueg.velovwidget.Item.DATABASE_NAME;
 
 @Dao
 public interface WidgetItemsDao {
     @Query("SELECT * FROM "+DATABASE_NAME+" WHERE contract_name LIKE :contract")
-    List<WidgetItem> getAll(String contract);
+    List<Item> getAll(String contract);
 
     @Query("SELECT * FROM "+DATABASE_NAME+" WHERE isPinned LIKE 1 AND contract_name LIKE :contract")
-    List<WidgetItem> getAllPinned(String contract);
+    List<Item> getAllPinned(String contract);
 
     @Insert
-    void insertAll(WidgetItem... items);
+    void insertAll(Item... items);
 
     @Update
-    void updateItems(WidgetItem... items);
+    void updateItems(Item... items);
 
     @Delete
-    void delete(WidgetItem items);
+    void delete(Item items);
 
     @Query("DELETE FROM "+DATABASE_NAME)
     void deleteAll();

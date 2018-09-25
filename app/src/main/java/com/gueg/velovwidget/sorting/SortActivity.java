@@ -8,8 +8,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 
 import com.gueg.velovwidget.R;
-import com.gueg.velovwidget.WidgetItem;
-import com.gueg.velovwidget.WidgetProvider;
+import com.gueg.velovwidget.Item;
 import com.gueg.velovwidget.database_stations.WidgetItemsDatabase;
 
 import java.util.ArrayList;
@@ -18,18 +17,19 @@ import java.util.concurrent.ExecutionException;
 public class SortActivity extends AppCompatActivity {
 
     private static final int VERTICAL_ITEM_SPACE = 15;
-    ArrayList<WidgetItem> items = new ArrayList<>();
+    ArrayList<Item> items = new ArrayList<>();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sort);
+        setResult(RESULT_CANCELED);
 
 
         try {
-            items = WidgetItem.sort(
-                    new WidgetItemsDatabase.DatabaseLoader.PinnedItems().execute(getApplicationContext(), WidgetItem.getSelectedContract(getApplicationContext())).get()
+            items = Item.sort(
+                    new WidgetItemsDatabase.DatabaseLoader.PinnedItems().execute(getApplicationContext(), Item.getSelectedContract(getApplicationContext())).get()
             );
         } catch (InterruptedException|ExecutionException e) {
             e.printStackTrace();
@@ -80,7 +80,7 @@ public class SortActivity extends AppCompatActivity {
                 for(int i=0; i<items.size(); i++)
                     items.get(i).rank=i;
                 new WidgetItemsDatabase.DatabaseLoader.UpdateItems(getApplicationContext(), items).start();
-                WidgetProvider.updateWidget(SortActivity.this);
+                setResult(RESULT_OK);
                 finish();
             }
         });
@@ -88,6 +88,7 @@ public class SortActivity extends AppCompatActivity {
         findViewById(R.id.activity_sort_cancel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                setResult(RESULT_CANCELED);
                 finish();
             }
         });

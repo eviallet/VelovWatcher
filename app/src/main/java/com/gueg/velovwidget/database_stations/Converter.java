@@ -5,17 +5,17 @@ import android.arch.persistence.room.TypeConverter;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.gueg.velovwidget.WidgetItem;
+import com.gueg.velovwidget.Item;
 
 public class Converter {
 
     @TypeConverter
-    public static WidgetItem.Position fromJsonToPosition(String positionJson) {
-        return new Gson().fromJson(positionJson, new TypeToken<WidgetItem.Position>() {}.getType());
+    public static Item.Position fromJsonToPosition(String positionJson) {
+        return new Gson().fromJson(positionJson, new TypeToken<Item.Position>() {}.getType());
     }
 
     @TypeConverter
-    public static String fromPositionToJson(WidgetItem.Position position) {
+    public static String fromPositionToJson(Item.Position position) {
         return new Gson().toJson(position);
     }
 

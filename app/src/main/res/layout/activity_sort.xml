@@ -4,17 +4,12 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/activity_sort_recyclerview"
-        android:scrollbars="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="50dp"
-        android:clipToPadding="false" />
     <LinearLayout
+        android:id="@+id/activity_sort_buttons"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:orientation="horizontal"
+        android:layout_marginEnd="20dp"
         android:gravity="end|bottom"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
@@ -25,6 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/cancel"
+            android:background="@null"
             tools:ignore="ButtonStyle" />
 
         <Button
@@ -32,8 +28,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/confirm"
+            android:textColor="@color/colorHig"
+            android:background="@null"
             tools:ignore="ButtonStyle" />
 
     </LinearLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/activity_sort_recyclerview"
+        android:scrollbars="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="40dp"
+        android:clipToPadding="false"
+
+        android:layout_above="@id/activity_sort_buttons"/>
 
 </RelativeLayout>

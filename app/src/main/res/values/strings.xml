@@ -3,6 +3,9 @@
     <string name="widget_last_udpate_time">Dernière actualisation : </string>
 
     <string name="menu_change_city">Changer de ville</string>
+    <string name="menu_refresh">Rafraichir</string>
+    <string name="menu_settings">Configurer</string>
+    <string name="menu_sort">Trier</string>
 
     <string name="activity_pins_choose">Choisir</string>
 

@@ -6,14 +6,14 @@ import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.gueg.velovwidget.WidgetItem;
+import com.gueg.velovwidget.Item;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.gueg.velovwidget.WidgetItem.DATABASE_NAME;
+import static com.gueg.velovwidget.Item.DATABASE_NAME;
 
-@Database(entities = {WidgetItem.class}, version = 2, exportSchema = false)
+@Database(entities = {Item.class}, version = 2, exportSchema = false)
 public abstract class WidgetItemsDatabase extends RoomDatabase {
 
     public abstract WidgetItemsDao widgetItemsDao();
@@ -40,40 +40,40 @@ public abstract class WidgetItemsDatabase extends RoomDatabase {
 
     public static class DatabaseLoader {
 
-        public static class AllItems extends AsyncTask<Object, Void, ArrayList<WidgetItem>> {
+        public static class AllItems extends AsyncTask<Object, Void, ArrayList<Item>> {
             @Override
-            protected final ArrayList<WidgetItem> doInBackground(Object... objs) {
+            protected final ArrayList<Item> doInBackground(Object... objs) {
                 return new ArrayList<>(WidgetItemsDatabase.getDatabase((Context)objs[0]).widgetItemsDao().getAll((String)objs[1]));
             }
         }
 
-        public static class PinnedItems extends AsyncTask<Object, Void, ArrayList<WidgetItem>> {
+        public static class PinnedItems extends AsyncTask<Object, Void, ArrayList<Item>> {
             @Override
-            protected final ArrayList<WidgetItem> doInBackground(Object... objs){
+            protected final ArrayList<Item> doInBackground(Object... objs){
                 return new ArrayList<>(WidgetItemsDatabase.getDatabase((Context)objs[0]).widgetItemsDao().getAllPinned((String)objs[1]));
             }
         }
 
         public static class WriteItems extends Thread {
             Context c;
-            List<WidgetItem> items;
+            List<Item> items;
 
-            public WriteItems(Context c, List<WidgetItem> items) {
+            public WriteItems(Context c, List<Item> items) {
                 this.c = c;
                 this.items = items;
             }
 
             @Override
             public void run() {
-                WidgetItemsDatabase.getDatabase(c).widgetItemsDao().insertAll(items.toArray(new WidgetItem[items.size()]));
+                WidgetItemsDatabase.getDatabase(c).widgetItemsDao().insertAll(items.toArray(new Item[items.size()]));
             }
         }
 
         public static class TogglePinnedItem extends Thread {
             Context c;
-            WidgetItem item;
+            Item item;
 
-            public TogglePinnedItem(Context c, WidgetItem item) {
+            public TogglePinnedItem(Context c, Item item) {
                 this.c = c;
                 this.item = item;
             }
@@ -88,16 +88,16 @@ public abstract class WidgetItemsDatabase extends RoomDatabase {
 
         public static class UpdateItems extends Thread {
             Context c;
-            ArrayList<WidgetItem> items;
+            ArrayList<Item> items;
 
-            public UpdateItems(Context c, ArrayList<WidgetItem> items) {
+            public UpdateItems(Context c, ArrayList<Item> items) {
                 this.c = c;
                 this.items = items;
             }
 
             @Override
             public void run() {
-                WidgetItemsDatabase.getDatabase(c.getApplicationContext()).widgetItemsDao().updateItems(items.toArray(new WidgetItem[items.size()]));
+                WidgetItemsDatabase.getDatabase(c.getApplicationContext()).widgetItemsDao().updateItems(items.toArray(new Item[items.size()]));
             }
         }
     }

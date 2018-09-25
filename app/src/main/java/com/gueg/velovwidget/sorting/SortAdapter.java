@@ -9,14 +9,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.gueg.velovwidget.R;
-import com.gueg.velovwidget.WidgetItem;
+import com.gueg.velovwidget.Item;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class SortAdapter extends RecyclerView.Adapter<SortAdapter.ViewHolder> {
 
-    private ArrayList<WidgetItem> mList;
+    private ArrayList<Item> mList;
 
 
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -29,7 +29,7 @@ public class SortAdapter extends RecyclerView.Adapter<SortAdapter.ViewHolder> {
     }
 
 
-    SortAdapter(ArrayList<WidgetItem> list) {
+    SortAdapter(ArrayList<Item> list) {
         mList = list;
     }
 
