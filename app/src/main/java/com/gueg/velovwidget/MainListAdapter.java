@@ -40,16 +40,30 @@ public class MainListAdapter extends ArrayAdapter<Item> {
                                     new WidgetItemsDatabase.DatabaseLoader.PinnedItems().
                                             execute(getContext(), Item.getSelectedContract(getContext())).
                                             get());
+                    final ArrayList<Item> cp = (ArrayList<Item>)items.clone();
+                    ((MainListActivity)getContext()).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            MainListAdapter.this.addAll(cp);
+                        }
+                    });
                     for(int i=0; i<items.size(); i++) {
                         Item item = items.get(i);
                         items.remove(item);
                         JsonParser.updateDynamicDataFromApi(item);
                         items.add(i,item);
+                        ((MainListActivity)getContext()).runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                for(int i=0; i<items.size(); i++)
+                                    MainListAdapter.this.getItem(i).setData(items.get(i).data);
+                                MainListAdapter.this.notifyDataSetChanged();
+                            }
+                        });
                     }
                     ((MainListActivity)getContext()).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            MainListAdapter.this.addAll(items);
                             _listener.onRefreshFinished();
                         }
                     });
@@ -58,8 +72,6 @@ public class MainListAdapter extends ArrayAdapter<Item> {
                 }
             }
         }).start();
-
-        notifyDataSetChanged();
     }
 
     @Override

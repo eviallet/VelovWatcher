@@ -58,6 +58,9 @@ public class Item {
         return data!=null&&data.status.equals(STATUS_OPEN);
     }
 
+    public void setData(DynamicData d) {
+        data = d;
+    }
 
 
     @Override
