@@ -27,7 +27,6 @@ public class JsonParser {
     private static final String API_SCHEME_CONTRACT_NAME = "{contract_name}";
     private static final String API_SCHEME_API_KEY = "{api_key}";
     private static String API_KEY;
-    public static boolean IS_API_KEY_LOADED = false;
 
 
 
@@ -41,7 +40,6 @@ public class JsonParser {
                 total.append(line).append('\n');
             }
             API_KEY = total.toString();
-            IS_API_KEY_LOADED = true;
 
         } catch(IOException e) {
             e.printStackTrace();

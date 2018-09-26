@@ -26,7 +26,6 @@ public class MainListAdapter extends ArrayAdapter<Item> {
 
     public void refresh() {
         _listener.onRefreshStarted();
-        super.clear();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -44,20 +43,21 @@ public class MainListAdapter extends ArrayAdapter<Item> {
                     ((MainListActivity)getContext()).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            clear();
                             MainListAdapter.this.addAll(cp);
                         }
                     });
                     for(int i=0; i<items.size(); i++) {
+                        final int pos = i;
                         Item item = items.get(i);
-                        items.remove(item);
-                        JsonParser.updateDynamicDataFromApi(item);
-                        items.add(i,item);
+                        items.remove(i);
+                        items.add(i,JsonParser.updateDynamicDataFromApi(item));
                         ((MainListActivity)getContext()).runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                for(int i=0; i<items.size(); i++)
-                                    MainListAdapter.this.getItem(i).setData(items.get(i).data);
+                                MainListAdapter.this.getItem(pos).setData(items.get(pos).data);
                                 MainListAdapter.this.notifyDataSetChanged();
+                                _listener.onProgressChanged(pos, items.size());
                             }
                         });
                     }
@@ -117,6 +117,7 @@ public class MainListAdapter extends ArrayAdapter<Item> {
 
     public interface RefreshListener {
         void onRefreshStarted();
+        void onProgressChanged(int progress, int max);
         void onRefreshFinished();
     }
 }

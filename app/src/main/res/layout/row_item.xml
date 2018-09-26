@@ -34,9 +34,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:textColor="@color/colorMed"
+            android:textColor="@color/colorTextBlack"
             android:textSize="17sp"
             android:textStyle="bold"
+
+            android:text="--"
 
             android:layout_margin="5dp"
             />
@@ -53,9 +55,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:textColor="@color/colorHig"
+            android:textColor="@color/colorTextBlack"
             android:textSize="17sp"
             android:textStyle="bold"
+
+            android:text="--"
 
             android:layout_margin="5dp"/>
     </LinearLayout>

@@ -1,13 +1,19 @@
 package com.gueg.velovwidget;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.gueg.velovwidget.database_stations.JsonParser;
 import com.gueg.velovwidget.map.PinsActivity;
@@ -23,6 +29,7 @@ public class MainListActivity extends AppCompatActivity {
     ListView _list;
     MainListAdapter _adapter;
     SwipeRefreshLayout _swipe;
+    ProgressBar _progress;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,13 +41,24 @@ public class MainListActivity extends AppCompatActivity {
 
         _swipe = findViewById(R.id.widget_list_refresh);
         _list = findViewById(R.id.widget_list_stations);
+        _progress = findViewById(R.id.widget_list_progress);
+
         _adapter = new MainListAdapter(this);
         _adapter.setListener(new MainListAdapter.RefreshListener() {
             @Override public void onRefreshStarted() {
                 _swipe.setRefreshing(true);
             }
+            @Override public void onProgressChanged(int progress, int max) {
+                if(_progress.getVisibility()!= View.VISIBLE)
+                    _progress.setVisibility(View.VISIBLE);
+                _progress.setMax(max);
+                _progress.setProgress(progress);
+            }
             @Override public void onRefreshFinished() {
+                _progress.setVisibility(View.GONE);
                 _swipe.setRefreshing(false);
+                if(_progress.getProgress()==0)
+                    startActivityForResult(new Intent(MainListActivity.this, PinsActivity.class), ACTIVITY_PINS);
             }
         });
         _list.setAdapter(_adapter);
