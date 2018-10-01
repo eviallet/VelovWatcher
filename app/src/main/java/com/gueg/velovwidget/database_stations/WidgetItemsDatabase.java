@@ -5,6 +5,7 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 
 import com.gueg.velovwidget.Item;
 
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.gueg.velovwidget.Item.DATABASE_NAME;
+import static com.gueg.velovwidget.MainListActivity.IS_DATABASE_BUSY;
 
 @Database(entities = {Item.class}, version = 2, exportSchema = false)
 public abstract class WidgetItemsDatabase extends RoomDatabase {
@@ -65,7 +67,9 @@ public abstract class WidgetItemsDatabase extends RoomDatabase {
 
             @Override
             public void run() {
+                PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(IS_DATABASE_BUSY, true).apply();
                 WidgetItemsDatabase.getDatabase(c).widgetItemsDao().insertAll(items.toArray(new Item[items.size()]));
+                PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(IS_DATABASE_BUSY, false).apply();
             }
         }
 
@@ -80,8 +84,10 @@ public abstract class WidgetItemsDatabase extends RoomDatabase {
 
             @Override
             public void run() {
+                PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(IS_DATABASE_BUSY, true).apply();
                 item.isPinned = !item.isPinned;
                 WidgetItemsDatabase.getDatabase(c.getApplicationContext()).widgetItemsDao().updateItems(item);
+                PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(IS_DATABASE_BUSY, false).apply();
             }
         }
 
@@ -97,7 +103,9 @@ public abstract class WidgetItemsDatabase extends RoomDatabase {
 
             @Override
             public void run() {
+                PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(IS_DATABASE_BUSY, true).apply();
                 WidgetItemsDatabase.getDatabase(c.getApplicationContext()).widgetItemsDao().updateItems(items.toArray(new Item[items.size()]));
+                PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(IS_DATABASE_BUSY, false).apply();
             }
         }
     }

@@ -12,8 +12,16 @@
         android:layout_marginEnd="20dp"
         android:gravity="end|bottom"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true">
+        android:layout_alignParentEnd="true">
+
+        <Button
+            android:id="@+id/activity_sort_separator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/separator"
+            android:background="@null"
+            tools:ignore="ButtonStyle"
+            android:layout_marginEnd="25dp"/>
 
         <Button
             android:id="@+id/activity_sort_cancel"

@@ -73,18 +73,6 @@ public class PinsActivity extends AppCompatActivity {
             }
         } else
             checkExternalStoragePermission();
-
-        // Delete db
-        /*
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                WidgetItemsDatabase.getDatabase(getApplicationContext()).widgetItemsDao().deleteAll();
-                Log.d(":-:","PinsActivity - DB deleted");
-            }
-        }).start();
-        */
-
     }
 
     private void checkExternalStoragePermission() {

@@ -1,12 +1,17 @@
 package com.gueg.velovwidget;
 
+import android.annotation.SuppressLint;
 import android.arch.persistence.room.Room;
 import android.content.Context;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.gueg.velovwidget.database_stations.JsonParser;
@@ -15,12 +20,83 @@ import com.gueg.velovwidget.database_stations.WidgetItemsDatabase;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-public class MainListAdapter extends ArrayAdapter<Item> {
+import static com.gueg.velovwidget.MainListActivity.IS_DATABASE_BUSY;
+
+public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ViewHolder> {
     private boolean _init = false;
     private RefreshListener _listener;
 
-    public MainListAdapter(final Context context) {
-        super(context, 0);
+
+    private ArrayList<Item> _list;
+    private Context c;
+
+
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        LinearLayout bkg, dynamicDataLayout;
+        TextView title, bikes, stands;
+        ViewHolder(View v) {
+            super(v);
+            bkg = v.findViewById(R.id.widget_item_bkg);
+            dynamicDataLayout = v.findViewById(R.id.widget_item_dynamic_data_layout);
+            title = v.findViewById(R.id.widget_item_title);
+            bikes = v.findViewById(R.id.widget_item_available_bikes);
+            stands = v.findViewById(R.id.widget_item_available_bike_stands);
+        }
+    }
+
+    public MainListAdapter(Context c) {
+        this.c = c;
+        _list = new ArrayList<>();
+    }
+
+    @NonNull
+    @Override
+    public MainListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(c).inflate(R.layout.row_item, parent, false);
+        return new MainListAdapter.ViewHolder(v);
+    }
+
+    @SuppressLint("SetTextI18n")
+    @Override
+    public void onBindViewHolder(@NonNull final MainListAdapter.ViewHolder holder, final int position) {
+        if(position<_list.size()) {
+            Item item = _list.get(position);
+
+            holder.title.setText(item.name);
+
+            if(item.isSeparator()) {
+                holder.dynamicDataLayout.setVisibility(View.GONE);
+                holder.title.setTextColor(c.getResources().getColor(R.color.colorTextWhite));
+                holder.bkg.setBackgroundColor(c.getResources().getColor(R.color.colorPrimary));
+            } else {
+                holder.dynamicDataLayout.setVisibility(View.VISIBLE);
+                holder.title.setTextColor(c.getResources().getColor(R.color.colorTextBlack));
+                holder.bkg.setBackgroundColor(c.getResources().getColor(R.color.colorTextWhite));
+
+                if (item.data != null && !item.isOpen())
+                    holder.title.setTextColor(c.getResources().getColor(R.color.colorLow));
+
+                if (item.data != null) {
+                    // Available bikes
+                    holder.bikes.setText(Integer.toString(item.data.available_bikes));
+                    if (item.data.available_bikes < item.data.bike_stands * 0.15)
+                        holder.bikes.setTextColor(c.getResources().getColor(R.color.colorLow));
+                    else if (item.data.available_bikes < item.data.bike_stands * 0.3)
+                        holder.bikes.setTextColor(c.getResources().getColor(R.color.colorMed));
+                    else
+                        holder.bikes.setTextColor(c.getResources().getColor(R.color.colorHig));
+
+                    // Available bike stands
+                    holder.stands.setText(Integer.toString(item.data.available_bike_stands));
+                    if (item.data.available_bike_stands < item.data.bike_stands * 0.15)
+                        holder.stands.setTextColor(c.getResources().getColor(R.color.colorLow));
+                    else if (item.data.available_bike_stands < item.data.bike_stands * 0.3)
+                        holder.stands.setTextColor(c.getResources().getColor(R.color.colorMed));
+                    else
+                        holder.stands.setTextColor(c.getResources().getColor(R.color.colorHig));
+                }
+            }
+        }
     }
 
 
@@ -30,38 +106,37 @@ public class MainListAdapter extends ArrayAdapter<Item> {
             @Override
             public void run() {
                 if(!_init) {
-                    Room.databaseBuilder(getContext(), WidgetItemsDatabase.class, "widget_items").build();
+                    Room.databaseBuilder(c, WidgetItemsDatabase.class, "widget_items").build();
                     _init = true;
                 }
                 try {
-                    final ArrayList<Item> items =
+                    while(PreferenceManager.getDefaultSharedPreferences(c).getBoolean(IS_DATABASE_BUSY,false));
+
+                    _list.clear();
+                    _list.addAll(
                             Item.sort(
                                     new WidgetItemsDatabase.DatabaseLoader.PinnedItems().
-                                            execute(getContext(), Item.getSelectedContract(getContext())).
-                                            get());
-                    final ArrayList<Item> cp = (ArrayList<Item>)items.clone();
-                    ((MainListActivity)getContext()).runOnUiThread(new Runnable() {
+                                            execute(c, Item.getSelectedContract(c)).
+                                            get()));
+                    ((MainListActivity)c).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            clear();
-                            MainListAdapter.this.addAll(cp);
+                            MainListAdapter.this.notifyDataSetChanged();
                         }
                     });
-                    for(int i=0; i<items.size(); i++) {
+                    for(int i=0; i<_list.size(); i++) {
                         final int pos = i;
-                        Item item = items.get(i);
-                        items.remove(i);
-                        items.add(i,JsonParser.updateDynamicDataFromApi(item));
-                        ((MainListActivity)getContext()).runOnUiThread(new Runnable() {
+                        if(!_list.get(i).isSeparator())
+                            _list.get(i).setData(JsonParser.updateDynamicDataFromApi(_list.get(i)).data);
+                        ((MainListActivity)c).runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                MainListAdapter.this.getItem(pos).setData(items.get(pos).data);
-                                MainListAdapter.this.notifyDataSetChanged();
-                                _listener.onProgressChanged(pos, items.size());
+                                MainListAdapter.this.notifyItemChanged(pos);
+                                _listener.onProgressChanged(pos, _list.size());
                             }
                         });
                     }
-                    ((MainListActivity)getContext()).runOnUiThread(new Runnable() {
+                    ((MainListActivity)c).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             _listener.onRefreshFinished();
@@ -74,41 +149,10 @@ public class MainListAdapter extends ArrayAdapter<Item> {
         }).start();
     }
 
+
     @Override
-    @NonNull
-    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-        Item item = getItem(position);
-
-        if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.row_item, parent, false);
-        }
-
-        ((TextView)convertView.findViewById(R.id.widget_item_title)).setText(item.name);
-
-        if(item.data!=null&&!item.isOpen())
-            ((TextView)convertView.findViewById(R.id.widget_item_title)).setTextColor(getContext().getResources().getColor(R.color.colorLow));
-
-        if(item.data!=null) {
-            // Available bikes
-            ((TextView) convertView.findViewById(R.id.widget_item_available_bikes)).setText(Integer.toString(item.data.available_bikes));
-            if (item.data.available_bikes < item.data.bike_stands * 0.15)
-                ((TextView) convertView.findViewById(R.id.widget_item_available_bikes)).setTextColor(getContext().getResources().getColor(R.color.colorLow));
-            else if (item.data.available_bikes < item.data.bike_stands * 0.3)
-                ((TextView) convertView.findViewById(R.id.widget_item_available_bikes)).setTextColor(getContext().getResources().getColor(R.color.colorMed));
-            else
-                ((TextView) convertView.findViewById(R.id.widget_item_available_bikes)).setTextColor(getContext().getResources().getColor(R.color.colorHig));
-
-            // Available bike stands
-            ((TextView) convertView.findViewById(R.id.widget_item_available_bike_stands)).setText(Integer.toString(item.data.available_bike_stands));
-            if (item.data.available_bike_stands < item.data.bike_stands * 0.15)
-                ((TextView) convertView.findViewById(R.id.widget_item_available_bike_stands)).setTextColor(getContext().getResources().getColor(R.color.colorLow));
-            else if (item.data.available_bike_stands < item.data.bike_stands * 0.3)
-                ((TextView) convertView.findViewById(R.id.widget_item_available_bike_stands)).setTextColor(getContext().getResources().getColor(R.color.colorMed));
-            else
-                ((TextView) convertView.findViewById(R.id.widget_item_available_bike_stands)).setTextColor(getContext().getResources().getColor(R.color.colorHig));
-        }
-
-        return convertView;
+    public int getItemCount() {
+        return _list.size();
     }
 
     public void setListener(RefreshListener l) {

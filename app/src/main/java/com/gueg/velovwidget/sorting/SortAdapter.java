@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gueg.velovwidget.R;
@@ -21,10 +22,12 @@ public class SortAdapter extends RecyclerView.Adapter<SortAdapter.ViewHolder> {
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView mTextView;
+        ImageView mImageView;
 
         ViewHolder(View v) {
             super(v);
             mTextView = v.findViewById(R.id.row_sort_title);
+            mImageView = v.findViewById(R.id.row_sort_type);
         }
     }
 
@@ -43,6 +46,9 @@ public class SortAdapter extends RecyclerView.Adapter<SortAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull final SortAdapter.ViewHolder holder, final int position) {
         holder.mTextView.setText(mList.get(position).name);
+        holder.mImageView.setImageDrawable(mList.get(position).isSeparator()?
+                holder.mImageView.getContext().getResources().getDrawable(R.drawable.ic_sort):
+                holder.mImageView.getContext().getResources().getDrawable(R.drawable.ic_velo));
     }
 
     @Override

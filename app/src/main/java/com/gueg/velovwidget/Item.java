@@ -6,6 +6,7 @@ import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.gueg.velovwidget.database_stations.Converter;
 import com.gueg.velovwidget.database_stations.DynamicData;
@@ -27,6 +28,8 @@ public class Item {
 
     private static final String STATUS_OPEN = "OPEN";
     private static final String STATUS_CLOSED = "CLOSED";
+
+    public static final Position POSITION_SEPARATOR = new Position(0,0);
 
     @NonNull
     public Integer number;
@@ -58,6 +61,10 @@ public class Item {
         return data!=null&&data.status.equals(STATUS_OPEN);
     }
 
+    public boolean isSeparator() {
+        return number==0&&position.lat==POSITION_SEPARATOR.lat&&position.lng==POSITION_SEPARATOR.lng;
+    }
+
     public void setData(DynamicData d) {
         data = d;
     }
@@ -66,6 +73,10 @@ public class Item {
     @Override
     public String toString() {
         return "number = "+number+" - name = "+name+" - address = "+address+" - latitude = "+position.lat+" - longitude = "+position.lng+" - isPinned = "+isPinned+" - rank = "+rank;
+    }
+
+    public void toDebug() {
+        Log.d(":-:", "name = "+name+" - data = "+(data==null?"null":Integer.toString(data.available_bikes))+" - isSeparator = "+isSeparator());
     }
 
     @Override
@@ -135,5 +146,10 @@ public class Item {
     public static class Position {
         public double lat;
         public double lng;
+
+        Position(int lat, int lng) {
+            this.lat=lat;
+            this.lng=lng;
+        }
     }
 }

@@ -13,6 +13,7 @@
     <string name="overlay_pinned">ajoutée</string>
     <string name="overlay_unpinned">retirée</string>
 
+    <string name="separator">Séparateur</string>
     <string name="cancel">Annuler</string>
     <string name="confirm">Confirmer</string>
     <string name="yes">Oui</string>
@@ -21,4 +22,5 @@
     <string name="bubble_hint_rank">Rang dans la liste</string>
 
     <string name="toast_no_station_found">Aucune station trouvée.</string>
+    <string name="toast_no_title_separator">Entrez un titre.</string>
 </resources>

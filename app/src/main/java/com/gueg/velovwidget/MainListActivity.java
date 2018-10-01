@@ -1,18 +1,16 @@
 package com.gueg.velovwidget;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.os.Build;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.gueg.velovwidget.database_stations.JsonParser;
@@ -23,10 +21,14 @@ import com.gueg.velovwidget.sorting.SortActivity;
 
 public class MainListActivity extends AppCompatActivity {
 
+    public static final String IS_DATABASE_BUSY = "com.gueg.velovwatcher.is_database_busy";
+
     private static final int ACTIVITY_PINS = 0;
     private static final int ACTIVITY_SORT = 1;
 
-    ListView _list;
+    private static final String OFFICIAL_APP_PACKAGE = "com.jcdecaux.vls.lyon";
+
+    RecyclerView _list;
     MainListAdapter _adapter;
     SwipeRefreshLayout _swipe;
     ProgressBar _progress;
@@ -62,6 +64,7 @@ public class MainListActivity extends AppCompatActivity {
             }
         });
         _list.setAdapter(_adapter);
+        _list.setLayoutManager(new LinearLayoutManager(this));
 
         _swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override public void onRefresh() {
@@ -70,6 +73,19 @@ public class MainListActivity extends AppCompatActivity {
         });
 
         _adapter.refresh();
+
+        findViewById(R.id.widget_list_fab).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = getPackageManager().getLaunchIntentForPackage(OFFICIAL_APP_PACKAGE);
+                if (intent == null) {
+                    intent = new Intent(Intent.ACTION_VIEW);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=" + OFFICIAL_APP_PACKAGE));
+                }
+                startActivity(intent);
+            }
+        });
     }
 
 
