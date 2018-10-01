@@ -3,6 +3,9 @@
     <string name="widget_last_udpate_time">Dernière actualisation : </string>
 
     <string name="menu_change_city">Changer de ville</string>
+    <string name="menu_refresh">Rafraichir</string>
+    <string name="menu_settings">Configurer</string>
+    <string name="menu_sort">Trier</string>
 
     <string name="activity_pins_choose">Choisir</string>
 
@@ -10,6 +13,7 @@
     <string name="overlay_pinned">ajoutée</string>
     <string name="overlay_unpinned">retirée</string>
 
+    <string name="separator">Séparateur</string>
     <string name="cancel">Annuler</string>
     <string name="confirm">Confirmer</string>
     <string name="yes">Oui</string>
@@ -18,4 +22,5 @@
     <string name="bubble_hint_rank">Rang dans la liste</string>
 
     <string name="toast_no_station_found">Aucune station trouvée.</string>
+    <string name="toast_no_title_separator">Entrez un titre.</string>
 </resources>

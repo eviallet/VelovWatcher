@@ -6,30 +6,33 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gueg.velovwidget.R;
-import com.gueg.velovwidget.WidgetItem;
+import com.gueg.velovwidget.Item;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class SortAdapter extends RecyclerView.Adapter<SortAdapter.ViewHolder> {
 
-    private ArrayList<WidgetItem> mList;
+    private ArrayList<Item> mList;
 
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView mTextView;
+        ImageView mImageView;
 
         ViewHolder(View v) {
             super(v);
             mTextView = v.findViewById(R.id.row_sort_title);
+            mImageView = v.findViewById(R.id.row_sort_type);
         }
     }
 
 
-    SortAdapter(ArrayList<WidgetItem> list) {
+    SortAdapter(ArrayList<Item> list) {
         mList = list;
     }
 
@@ -43,6 +46,9 @@ public class SortAdapter extends RecyclerView.Adapter<SortAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull final SortAdapter.ViewHolder holder, final int position) {
         holder.mTextView.setText(mList.get(position).name);
+        holder.mImageView.setImageDrawable(mList.get(position).isSeparator()?
+                holder.mImageView.getContext().getResources().getDrawable(R.drawable.ic_sort):
+                holder.mImageView.getContext().getResources().getDrawable(R.drawable.ic_velo));
     }
 
     @Override

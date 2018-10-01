@@ -19,8 +19,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.gueg.velovwidget.R;
-import com.gueg.velovwidget.WidgetItem;
-import com.gueg.velovwidget.WidgetProvider;
+import com.gueg.velovwidget.Item;
 import com.gueg.velovwidget.database_stations.JsonParser;
 import com.gueg.velovwidget.database_stations.WidgetItemsDatabase;
 
@@ -44,15 +43,12 @@ public class PinsActivity extends AppCompatActivity {
 
     private static final int PERMISSION_REQUEST_WRITE = 0;
     private static final int PERMISSION_REQUEST_LOCALISATION = 1;
-
-    private int id;
-
     private MapView map;
     private ArrayList<Overlay> currentMarkersOverlays;
 
 
 
-    private ArrayList<WidgetItem> items = new ArrayList<>();
+    private ArrayList<Item> items = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,10 +56,8 @@ public class PinsActivity extends AppCompatActivity {
         setResult(RESULT_CANCELED);
 
 
-        if(WidgetItem.getSelectedContract(this).equals(WidgetItem.NO_CONTRACT_NAME)) {
+        if(Item.getSelectedContract(this).equals(Item.NO_CONTRACT_NAME)) {
             final ListView contractListView = new ListView(this);
-            if(!JsonParser.IS_API_KEY_LOADED)
-                JsonParser.loadApiKey(this);
             try {
                 final ArrayList<String> contracts = new JsonParser.GetContractList().execute().get();
                 contractListView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, contracts));
@@ -79,18 +73,6 @@ public class PinsActivity extends AppCompatActivity {
             }
         } else
             checkExternalStoragePermission();
-
-        // Delete db
-        /*
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                WidgetItemsDatabase.getDatabase(getApplicationContext()).widgetItemsDao().deleteAll();
-                Log.d(":-:","PinsActivity - DB deleted");
-            }
-        }).start();
-        */
-
     }
 
     private void checkExternalStoragePermission() {
@@ -113,22 +95,14 @@ public class PinsActivity extends AppCompatActivity {
 
         map = findViewById(R.id.activity_pins_map);
 
-
-        if(getIntent().getExtras()==null||
-                (id=getIntent().getExtras().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID))==AppWidgetManager.INVALID_APPWIDGET_ID) {
-            setResult(RESULT_CANCELED, new Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID));
-            finish();
-        }
-        setResult(RESULT_CANCELED, new Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, id));
-
         try {
-            items.addAll(new WidgetItemsDatabase.DatabaseLoader.AllItems().execute(this, WidgetItem.getSelectedContract(this)).get());
+            items.addAll(new WidgetItemsDatabase.DatabaseLoader.AllItems().execute(this, Item.getSelectedContract(this)).get());
         } catch (ExecutionException |InterruptedException e) {
             e.printStackTrace();
         }
 
         if(items.size()==0) {
-            items.addAll(JsonParser.loadStationsFromContract(WidgetItem.getSelectedContract(this)));
+            items.addAll(JsonParser.loadStationsFromContract(Item.getSelectedContract(this)));
             new WidgetItemsDatabase.DatabaseLoader.WriteItems(this, items).start();
         }
 
@@ -155,13 +129,6 @@ public class PinsActivity extends AppCompatActivity {
         GeoPoint myLocation = mapOverlay.getMyLocation();
         map.getOverlays().add(mapOverlay);
 
-        // Enable rotation
-        /*
-        RotationGestureOverlay rotation = new RotationGestureOverlay(map);
-        rotation.setEnabled(true);
-        map.setMultiTouchControls(true);
-        map.getOverlays().add(rotation);*/
-
         // Add overlay
         currentMarkersOverlays = OverlayProvider.setFastOverlay(map, items);
         map.getOverlays().addAll(currentMarkersOverlays);
@@ -176,14 +143,14 @@ public class PinsActivity extends AppCompatActivity {
 
 
         // Limit scrollable area
-        map.setScrollableAreaLimitDouble(WidgetItem.getBoundaries(items));
+        map.setScrollableAreaLimitDouble(Item.getBoundaries(items));
 
         // Set initial position
         IMapController mapController = map.getController();
         if(myLocation!=null)
             mapController.setCenter(myLocation);
         else
-            mapController.setCenter(WidgetItem.getBoundaries(items).getCenter());
+            mapController.setCenter(Item.getBoundaries(items).getCenter());
         mapController.setZoom(18.0d);
 
     }
@@ -240,7 +207,7 @@ public class PinsActivity extends AppCompatActivity {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
                         dialog.dismiss();
-                        PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString(WidgetItem.CONTRACT_NAME, choice).apply();
+                        PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString(Item.CONTRACT_NAME, choice).apply();
                         checkExternalStoragePermission();
                         break;
 
@@ -260,15 +227,14 @@ public class PinsActivity extends AppCompatActivity {
 
 
     private void resetCurrentContract() {
-        PreferenceManager.getDefaultSharedPreferences(this).edit().remove(WidgetItem.CONTRACT_NAME).apply();
+        PreferenceManager.getDefaultSharedPreferences(this).edit().remove(Item.CONTRACT_NAME).apply();
         recreate();
     }
 
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.activity_pins_confirm:
-                setResult(RESULT_OK, new Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, id));
-                WidgetProvider.updateWidget(PinsActivity.this);
+                setResult(RESULT_OK);
                 finish();
                 break;
             case R.id.activity_pins_change_city:
