@@ -85,20 +85,34 @@ public class Item {
     }
 
     public static BoundingBox getBoundaries(ArrayList<Item> items) {
-        double latMin = items.get(0).position.lat;
-        double latMax = items.get(0).position.lat;
-        double lngMin = items.get(0).position.lng;
-        double lngMax = items.get(0).position.lng;
+        int i=0;
+        double latMin=0;
+        while(latMin==0&&i<items.size())
+            latMin=items.get(i).position.lat;
+        i=0;
+        double latMax=0;
+        while(latMax==0&&i<items.size())
+            latMax = items.get(0).position.lat;
+        i=0;
+        double lngMin=0;
+        while(lngMin==0&&i<items.size())
+            lngMin = items.get(0).position.lng;
+        i=0;
+        double lngMax=0;
+        while(lngMax==0&&i<items.size())
+            lngMax = items.get(0).position.lng;
 
         for(Item item : items) {
-            if(item.position.lat<latMin)
-                latMin = item.position.lat;
-            else if(item.position.lat>latMax)
-                latMax = item.position.lat;
-            if(item.position.lng<lngMin)
-                lngMin = item.position.lng;
-            else if(item.position.lng>lngMax)
-                lngMax = item.position.lng;
+            if (!item.isSeparator()) {
+                if (item.position.lat < latMin)
+                    latMin = item.position.lat;
+                else if (item.position.lat > latMax)
+                    latMax = item.position.lat;
+                if (item.position.lng < lngMin)
+                    lngMin = item.position.lng;
+                else if (item.position.lng > lngMax)
+                    lngMax = item.position.lng;
+            }
         }
         return new BoundingBox(latMax, lngMax, latMin, lngMin);
     }

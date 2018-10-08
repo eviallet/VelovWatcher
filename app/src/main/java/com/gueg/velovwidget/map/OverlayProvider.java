@@ -4,10 +4,12 @@ import android.annotation.SuppressLint;
 import android.graphics.Paint;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gueg.velovwidget.R;
 import com.gueg.velovwidget.Item;
+import com.gueg.velovwidget.database_stations.JsonParser;
 import com.gueg.velovwidget.database_stations.WidgetItemsDatabase;
 
 import org.osmdroid.api.IGeoPoint;
@@ -76,9 +78,9 @@ public class OverlayProvider {
         ArrayList<IGeoPoint> points = new ArrayList<>();
         ArrayList<IGeoPoint> pinned = new ArrayList<>();
         for (Item item : items) {
-            if(!item.isPinned)
+            if(!item.isPinned&&!item.isSeparator())
                 points.add(new LabelledGeoPoint(item.position.lat, item.position.lng, item.name));
-            else
+            else if(!item.isSeparator())
                 pinned.add(new LabelledGeoPoint(item.position.lat, item.position.lng, item.name));
         }
 
@@ -125,6 +127,37 @@ public class OverlayProvider {
                 final Item item = Item.findByName(items, ((LabelledGeoPoint) points.get(point)).getLabel());
                 if(item!=null) {
                     final Marker m = getMarkerFromWidgetItem(map, item);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            item.setData(JsonParser.updateDynamicDataFromApi(item).data);
+                            ((PinsActivity) map.getContext()).runOnUiThread(new Runnable() {
+                                @SuppressLint("SetTextI18n")
+                                @Override
+                                public void run() {
+                                    if (item.data != null) {
+                                        // Available bikes
+                                        ((TextView)m.getInfoWindow().getView().findViewById(R.id.bubble_available_bikes)).setText(Integer.toString(item.data.available_bikes));
+                                        if (item.data.available_bikes < item.data.bike_stands * 0.15)
+                                            ((TextView)m.getInfoWindow().getView().findViewById(R.id.bubble_available_bikes)).setTextColor(map.getContext().getResources().getColor(R.color.colorLow));
+                                        else if (item.data.available_bikes < item.data.bike_stands * 0.3)
+                                            ((TextView)m.getInfoWindow().getView().findViewById(R.id.bubble_available_bikes)).setTextColor(map.getContext().getResources().getColor(R.color.colorMed));
+                                        else
+                                            ((TextView)m.getInfoWindow().getView().findViewById(R.id.bubble_available_bikes)).setTextColor(map.getContext().getResources().getColor(R.color.colorHig));
+
+                                        // Available bike stands
+                                        ((TextView)m.getInfoWindow().getView().findViewById(R.id.bubble_available_bike_stands)).setText(Integer.toString(item.data.available_bike_stands));
+                                        if (item.data.available_bike_stands < item.data.bike_stands * 0.15)
+                                            ((TextView)m.getInfoWindow().getView().findViewById(R.id.bubble_available_bike_stands)).setTextColor(map.getContext().getResources().getColor(R.color.colorLow));
+                                        else if (item.data.available_bike_stands < item.data.bike_stands * 0.3)
+                                            ((TextView)m.getInfoWindow().getView().findViewById(R.id.bubble_available_bike_stands)).setTextColor(map.getContext().getResources().getColor(R.color.colorMed));
+                                        else
+                                            ((TextView)m.getInfoWindow().getView().findViewById(R.id.bubble_available_bike_stands)).setTextColor(map.getContext().getResources().getColor(R.color.colorHig));
+                                    }
+                                }
+                            });
+                        }
+                    }).start();
                     map.getOverlays().add(m);
                     m.getInfoWindow().getView().findViewById(R.id.bubble_favorite).setOnClickListener(new View.OnClickListener() {
                         @Override
