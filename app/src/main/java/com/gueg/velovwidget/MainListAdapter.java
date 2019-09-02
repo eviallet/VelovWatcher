@@ -6,12 +6,12 @@ import android.content.Context;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.gueg.velovwidget.database_stations.JsonParser;
@@ -34,6 +34,8 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ViewHo
     static class ViewHolder extends RecyclerView.ViewHolder {
         LinearLayout bkg, dynamicDataLayout;
         TextView title, bikes, stands;
+        ImageView icon;
+        ProgressBar loading;
         ViewHolder(View v) {
             super(v);
             bkg = v.findViewById(R.id.widget_item_bkg);
@@ -41,6 +43,8 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ViewHo
             title = v.findViewById(R.id.widget_item_title);
             bikes = v.findViewById(R.id.widget_item_available_bikes);
             stands = v.findViewById(R.id.widget_item_available_bike_stands);
+            icon = v.findViewById(R.id.widget_item_bikes_pic);
+            loading = v.findViewById(R.id.widget_item_loading);
         }
     }
 
@@ -62,6 +66,8 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ViewHo
         if(position<_list.size()) {
             Item item = _list.get(position);
 
+            holder.loading.setVisibility(View.GONE);
+
             holder.title.setText(item.name);
 
             if(item.isSeparator()) {
@@ -73,10 +79,25 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ViewHo
                 holder.title.setTextColor(c.getResources().getColor(R.color.colorTextBlack));
                 holder.bkg.setBackgroundColor(c.getResources().getColor(R.color.colorTextWhite));
 
-                if (item.data != null && !item.isOpen())
-                    holder.title.setTextColor(c.getResources().getColor(R.color.colorLow));
+                if(item.data == null) {
+                    holder.loading.setVisibility(View.VISIBLE);
+                    holder.title.setTextColor(c.getResources().getColor(R.color.colorTextBlack));
+                    holder.icon.setImageResource(R.drawable.ic_velo);
+                    holder.dynamicDataLayout.setVisibility(View.GONE);
+                    return;
+                }
 
-                if (item.data != null) {
+                holder.loading.setVisibility(View.GONE);
+                holder.dynamicDataLayout.setVisibility(View.VISIBLE);
+                if (!item.isOpen()) {
+                    holder.title.setTextColor(c.getResources().getColor(R.color.colorLow));
+                    holder.icon.setImageResource(R.drawable.ic_closed);
+                } else if (!item.isConnected()) {
+                    holder.title.setTextColor(c.getResources().getColor(R.color.colorLow));
+                    holder.icon.setImageResource(R.drawable.ic_not_connected);
+                } else {
+                    holder.title.setTextColor(c.getResources().getColor(R.color.colorTextBlack));
+                    holder.icon.setImageResource(R.drawable.ic_velo);
                     // Available bikes
                     holder.bikes.setText(Integer.toString(item.data.available_bikes));
                     if (item.data.available_bikes < item.data.bike_stands * 0.15)

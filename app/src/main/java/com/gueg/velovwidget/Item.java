@@ -23,8 +23,8 @@ import static com.gueg.velovwidget.Item.DATABASE_NAME;
 @Entity(tableName = DATABASE_NAME, primaryKeys = {"number", "name"})
 public class Item {
     public static final String DATABASE_NAME = "widget_items";
-    public static final String CONTRACT_NAME = "com.gueg.velovwatcher.sharedprefs.contract_name";
-    public static final String NO_CONTRACT_NAME = "com.gueg.velovwatcher.sharedprefs.contract_name.none";
+    public static final String CONTRACT_NAME = "com.gueg.velovwatcher.sharedprefs.contractName";
+    public static final String NO_CONTRACT_NAME = "com.gueg.velovwatcher.sharedprefs.contractName.none";
 
     private static final String STATUS_OPEN = "OPEN";
     private static final String STATUS_CLOSED = "CLOSED";
@@ -33,7 +33,7 @@ public class Item {
 
     @NonNull
     public Integer number;
-    public String contract_name;
+    public String contractName;
     @NonNull
     public String name;
     public String address;
@@ -47,9 +47,9 @@ public class Item {
     @Ignore
     public DynamicData data;
 
-    public Item(@NonNull Integer number, String contract_name, @NonNull String name, String address, Position position, boolean isPinned, int rank) {
+    public Item(@NonNull Integer number, String contractName, @NonNull String name, String address, Position position, boolean isPinned, int rank) {
         this.number = number;
-        this.contract_name = contract_name;
+        this.contractName = contractName;
         this.name = name;
         this.address = address;
         this.position = position;
@@ -58,11 +58,14 @@ public class Item {
     }
 
     public boolean isOpen() {
-        return data!=null&&data.status.equals(STATUS_OPEN);
+        return data != null && data.status.equals(STATUS_OPEN);
+    }
+    public boolean isConnected() {
+        return data != null && data.connected;
     }
 
     public boolean isSeparator() {
-        return number==0&&position.lat==POSITION_SEPARATOR.lat&&position.lng==POSITION_SEPARATOR.lng;
+        return number==0&&position.latitude==POSITION_SEPARATOR.latitude&&position.longitude==POSITION_SEPARATOR.longitude;
     }
 
     public void setData(DynamicData d) {
@@ -72,7 +75,7 @@ public class Item {
 
     @Override
     public String toString() {
-        return "number = "+number+" - name = "+name+" - address = "+address+" - latitude = "+position.lat+" - longitude = "+position.lng+" - isPinned = "+isPinned+" - rank = "+rank;
+        return "number = "+number+" - name = "+name+" - address = "+address+" - latitude = "+position.latitude+" - longitude = "+position.longitude+" - isPinned = "+isPinned+" - rank = "+rank;
     }
 
     public void toDebug() {
@@ -88,30 +91,30 @@ public class Item {
         int i=0;
         double latMin=0;
         while(latMin==0&&i<items.size())
-            latMin=items.get(i).position.lat;
+            latMin=items.get(i).position.latitude;
         i=0;
         double latMax=0;
         while(latMax==0&&i<items.size())
-            latMax = items.get(0).position.lat;
+            latMax = items.get(0).position.latitude;
         i=0;
         double lngMin=0;
         while(lngMin==0&&i<items.size())
-            lngMin = items.get(0).position.lng;
+            lngMin = items.get(0).position.longitude;
         i=0;
         double lngMax=0;
         while(lngMax==0&&i<items.size())
-            lngMax = items.get(0).position.lng;
+            lngMax = items.get(0).position.longitude;
 
         for(Item item : items) {
             if (!item.isSeparator()) {
-                if (item.position.lat < latMin)
-                    latMin = item.position.lat;
-                else if (item.position.lat > latMax)
-                    latMax = item.position.lat;
-                if (item.position.lng < lngMin)
-                    lngMin = item.position.lng;
-                else if (item.position.lng > lngMax)
-                    lngMax = item.position.lng;
+                if (item.position.latitude < latMin)
+                    latMin = item.position.latitude;
+                else if (item.position.latitude > latMax)
+                    latMax = item.position.latitude;
+                if (item.position.longitude < lngMin)
+                    lngMin = item.position.longitude;
+                else if (item.position.longitude > lngMax)
+                    lngMax = item.position.longitude;
             }
         }
         return new BoundingBox(latMax, lngMax, latMin, lngMin);
@@ -132,7 +135,7 @@ public class Item {
 
 
     public static ArrayList<Item> removeDuplicates(ArrayList<Item> items) {
-		// TODO why are there duplicates in a first place?
+        // TODO why are there duplicates in a first place?
         for(int i=0; i<items.size(); i++) {
             for(int j=0; j<items.size(); j++){
                 if(i!=j && items.get(i).equals(items.get(j))) {
@@ -158,12 +161,12 @@ public class Item {
     }
 
     public static class Position {
-        public double lat;
-        public double lng;
+        public double latitude;
+        public double longitude;
 
-        Position(int lat, int lng) {
-            this.lat=lat;
-            this.lng=lng;
+        Position(int latitude, int longitude) {
+            this.latitude = latitude;
+            this.longitude = longitude;
         }
     }
 }

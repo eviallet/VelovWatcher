@@ -7,8 +7,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.gueg.velovwidget.R;
 import com.gueg.velovwidget.Item;
+import com.gueg.velovwidget.R;
 import com.gueg.velovwidget.database_stations.JsonParser;
 import com.gueg.velovwidget.database_stations.WidgetItemsDatabase;
 
@@ -39,7 +39,7 @@ public class OverlayProvider {
         else
             m.setIcon(map.getContext().getResources().getDrawable(R.drawable.marker_hidden_pinned));
 
-        m.setPosition(new GeoPoint(item.position.lat, item.position.lng));
+        m.setPosition(new GeoPoint(item.position.latitude, item.position.longitude));
         m.setInfoWindow(new MarkerInfoWindow(R.layout.map_info_window, map));
         m.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
             @SuppressLint("SetTextI18n")
@@ -51,7 +51,7 @@ public class OverlayProvider {
                         Item wi = (Item)m.getRelatedObject();
                         new WidgetItemsDatabase.DatabaseLoader.TogglePinnedItem(map.getContext().getApplicationContext(), wi).start();
                         Toast.makeText(map.getContext().getApplicationContext(), map.getContext().getResources().getString(R.string.overlay_station)
-                                +" "+wi.name.toLowerCase()+" "+
+                                        +" "+wi.name.toLowerCase()+" "+
                                         (wi.isPinned?
                                                 map.getContext().getResources().getString(R.string.overlay_unpinned):
                                                 map.getContext().getResources().getString(R.string.overlay_pinned)),
@@ -79,9 +79,9 @@ public class OverlayProvider {
         ArrayList<IGeoPoint> pinned = new ArrayList<>();
         for (Item item : items) {
             if(!item.isPinned&&!item.isSeparator())
-                points.add(new LabelledGeoPoint(item.position.lat, item.position.lng, item.name));
+                points.add(new LabelledGeoPoint(item.position.latitude, item.position.longitude, item.name));
             else if(!item.isSeparator())
-                pinned.add(new LabelledGeoPoint(item.position.lat, item.position.lng, item.name));
+                pinned.add(new LabelledGeoPoint(item.position.latitude, item.position.longitude, item.name));
         }
 
         // wrap them in a theme
@@ -136,23 +136,40 @@ public class OverlayProvider {
                                 @Override
                                 public void run() {
                                     if (item.data != null) {
-                                        // Available bikes
-                                        ((TextView)m.getInfoWindow().getView().findViewById(R.id.bubble_available_bikes)).setText(Integer.toString(item.data.available_bikes));
-                                        if (item.data.available_bikes < item.data.bike_stands * 0.15)
-                                            ((TextView)m.getInfoWindow().getView().findViewById(R.id.bubble_available_bikes)).setTextColor(map.getContext().getResources().getColor(R.color.colorLow));
-                                        else if (item.data.available_bikes < item.data.bike_stands * 0.3)
-                                            ((TextView)m.getInfoWindow().getView().findViewById(R.id.bubble_available_bikes)).setTextColor(map.getContext().getResources().getColor(R.color.colorMed));
-                                        else
-                                            ((TextView)m.getInfoWindow().getView().findViewById(R.id.bubble_available_bikes)).setTextColor(map.getContext().getResources().getColor(R.color.colorHig));
+                                        if (item.isOpen() && item.isConnected()) {
+                                            // Available bikes
+                                            ((TextView) m.getInfoWindow().getView().findViewById(R.id.bubble_available_bikes)).setText(Integer.toString(item.data.available_bikes));
+                                            if (item.data.available_bikes < item.data.bike_stands * 0.15)
+                                                ((TextView) m.getInfoWindow().getView().findViewById(R.id.bubble_available_bikes)).setTextColor(map.getContext().getResources().getColor(R.color.colorLow));
+                                            else if (item.data.available_bikes < item.data.bike_stands * 0.3)
+                                                ((TextView) m.getInfoWindow().getView().findViewById(R.id.bubble_available_bikes)).setTextColor(map.getContext().getResources().getColor(R.color.colorMed));
+                                            else
+                                                ((TextView) m.getInfoWindow().getView().findViewById(R.id.bubble_available_bikes)).setTextColor(map.getContext().getResources().getColor(R.color.colorHig));
 
-                                        // Available bike stands
-                                        ((TextView)m.getInfoWindow().getView().findViewById(R.id.bubble_available_bike_stands)).setText(Integer.toString(item.data.available_bike_stands));
-                                        if (item.data.available_bike_stands < item.data.bike_stands * 0.15)
-                                            ((TextView)m.getInfoWindow().getView().findViewById(R.id.bubble_available_bike_stands)).setTextColor(map.getContext().getResources().getColor(R.color.colorLow));
-                                        else if (item.data.available_bike_stands < item.data.bike_stands * 0.3)
-                                            ((TextView)m.getInfoWindow().getView().findViewById(R.id.bubble_available_bike_stands)).setTextColor(map.getContext().getResources().getColor(R.color.colorMed));
-                                        else
-                                            ((TextView)m.getInfoWindow().getView().findViewById(R.id.bubble_available_bike_stands)).setTextColor(map.getContext().getResources().getColor(R.color.colorHig));
+                                            // Available bike stands
+                                            ((TextView) m.getInfoWindow().getView().findViewById(R.id.bubble_available_bike_stands)).setText(Integer.toString(item.data.available_bike_stands));
+                                            if (item.data.available_bike_stands < item.data.bike_stands * 0.15)
+                                                ((TextView) m.getInfoWindow().getView().findViewById(R.id.bubble_available_bike_stands)).setTextColor(map.getContext().getResources().getColor(R.color.colorLow));
+                                            else if (item.data.available_bike_stands < item.data.bike_stands * 0.3)
+                                                ((TextView) m.getInfoWindow().getView().findViewById(R.id.bubble_available_bike_stands)).setTextColor(map.getContext().getResources().getColor(R.color.colorMed));
+                                            else
+                                                ((TextView) m.getInfoWindow().getView().findViewById(R.id.bubble_available_bike_stands)).setTextColor(map.getContext().getResources().getColor(R.color.colorHig));
+                                        } else if(!item.isConnected()) {
+                                            ((TextView)m.getInfoWindow().getView().findViewById(R.id.bubble_title)).setTextColor(m.getInfoWindow().getView().getContext().getResources().getColor(R.color.colorLow));
+                                            ImageView im = m.getInfoWindow().getView().findViewById(R.id.bubble_image);
+                                            im.setVisibility(View.VISIBLE);
+                                            im.setImageResource(R.drawable.ic_not_connected);
+                                        } else if(!item.isOpen()) {
+                                            ((TextView)m.getInfoWindow().getView().findViewById(R.id.bubble_title)).setTextColor(m.getInfoWindow().getView().getContext().getResources().getColor(R.color.colorLow));
+                                            ImageView im = m.getInfoWindow().getView().findViewById(R.id.bubble_image);
+                                            im.setVisibility(View.VISIBLE);
+                                            im.setImageResource(R.drawable.ic_closed);
+                                        }
+                                    } else {
+                                        ((TextView)m.getInfoWindow().getView().findViewById(R.id.bubble_title)).setTextColor(m.getInfoWindow().getView().getContext().getResources().getColor(R.color.colorLow));
+                                        ImageView im = m.getInfoWindow().getView().findViewById(R.id.bubble_image);
+                                        im.setVisibility(View.VISIBLE);
+                                        im.setImageResource(R.drawable.ic_closed);
                                     }
                                 }
                             });

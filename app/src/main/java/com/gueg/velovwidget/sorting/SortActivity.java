@@ -8,14 +8,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.gueg.velovwidget.R;
 import com.gueg.velovwidget.Item;
-import com.gueg.velovwidget.database_stations.WidgetItemsDao;
+import com.gueg.velovwidget.R;
 import com.gueg.velovwidget.database_stations.WidgetItemsDatabase;
 
 import java.util.ArrayList;
@@ -27,7 +24,7 @@ public class SortActivity extends AppCompatActivity {
 
     private static final int VERTICAL_ITEM_SPACE = 15;
     ArrayList<Item> items = new ArrayList<>();
-	SortAdapter mAdapter;
+    SortAdapter mAdapter;
 
 
     @Override
@@ -99,7 +96,7 @@ public class SortActivity extends AppCompatActivity {
             public void onClick(View view) {
                 for(int i=0; i<items.size(); i++)
                     items.get(i).rank=i;
-                new WidgetItemsDatabase.DatabaseLoader.UpdateItems(getApplicationContext(), items).start();
+                new WidgetItemsDatabase.DatabaseLoader.UpdateItems(getApplicationContext(), items, true).start();
                 setResult(RESULT_OK);
                 finish();
             }
@@ -139,7 +136,7 @@ public class SortActivity extends AppCompatActivity {
                                 }
                             }).start();
                             items.add(0, sep);
-							mAdapter.notifyDataSetChanged();
+                            mAdapter.notifyDataSetChanged();
                             dialog.dismiss();
                         } else
                             Toast.makeText(SortActivity.this, getApplicationContext().getResources().getString(R.string.toast_no_title_separator), Toast.LENGTH_SHORT).show();

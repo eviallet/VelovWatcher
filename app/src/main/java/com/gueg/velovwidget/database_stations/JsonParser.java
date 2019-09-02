@@ -7,6 +7,9 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.gueg.velovwidget.Item;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,9 +23,9 @@ import java.util.concurrent.ExecutionException;
 
 public class JsonParser {
 
-    private static final String API_URL_CONTRACT_LIST = "https://api.jcdecaux.com/vls/v1/contracts?&apiKey={api_key}";
-    private static final String API_URL_UPDATE_STATION = "https://api.jcdecaux.com/vls/v1/stations/{station_number}?contract={contract_name}&apiKey={api_key}";
-    private static final String API_URL_GET_STATIONS = "https://api.jcdecaux.com/vls/v1/stations?contract={contract_name}&apiKey={api_key}";
+    private static final String API_URL_CONTRACT_LIST = "https://api.jcdecaux.com/vls/v3/contracts?&apiKey={api_key}";
+    private static final String API_URL_UPDATE_STATION = "https://api.jcdecaux.com/vls/v3/stations/{station_number}?contract={contract_name}&apiKey={api_key}";
+    private static final String API_URL_GET_STATIONS = "https://api.jcdecaux.com/vls/v3/stations?contract={contract_name}&apiKey={api_key}";
     private static final String API_SCHEME_STATION_NUMBER = "{station_number}";
     private static final String API_SCHEME_CONTRACT_NAME = "{contract_name}";
     private static final String API_SCHEME_API_KEY = "{api_key}";
@@ -244,14 +247,29 @@ public class JsonParser {
         }
     }
 
-    private static DynamicData loadDynamicDataFromJson(String data) {
-        return new Gson().fromJson(data, new TypeToken<DynamicData>(){}.getType());
+    private static DynamicData loadDynamicDataFromJson(String jsonString) {
+        try {
+            JSONObject json = new JSONObject(jsonString);
+            JSONObject mainStands = json.getJSONObject("mainStands");
+            JSONObject availabilities = mainStands.getJSONObject("availabilities");
+            return new DynamicData(
+                    json.getString("status"),
+                    mainStands.getInt("capacity"),
+                    availabilities.getInt("bikes"),
+                    availabilities.getInt("stands"),
+                    json.getString("lastUpdate"),
+                    json.getBoolean("connected")
+            );
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private static String completeFields(Item item) {
         return API_URL_UPDATE_STATION
                 .replace(API_SCHEME_STATION_NUMBER,Integer.toString(item.number))
-                .replace(API_SCHEME_CONTRACT_NAME,item.contract_name)
+                .replace(API_SCHEME_CONTRACT_NAME,item.contractName)
                 .replace(API_SCHEME_API_KEY,API_KEY);
     }
 

@@ -1,25 +1,31 @@
 package com.gueg.velovwidget.map;
 
 import android.Manifest;
-import android.appwidget.AppWidgetManager;
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ImageSpan;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.gueg.velovwidget.R;
 import com.gueg.velovwidget.Item;
+import com.gueg.velovwidget.R;
 import com.gueg.velovwidget.database_stations.JsonParser;
 import com.gueg.velovwidget.database_stations.WidgetItemsDatabase;
 
@@ -114,6 +120,92 @@ public class PinsActivity extends AppCompatActivity {
 
         loadMap();
     }
+
+
+    private static final int MENU_ID_UPDATE_STATIONS = 0;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(Menu.NONE, MENU_ID_UPDATE_STATIONS, 1, menuIconWithText(
+                getResources().getDrawable(R.drawable.ic_update),
+                getResources().getString(R.string.activity_pins_update_stations)));
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case MENU_ID_UPDATE_STATIONS:
+                updateStations();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private CharSequence menuIconWithText(Drawable r, String title) {
+        r.setBounds(0, 0, r.getIntrinsicWidth(), r.getIntrinsicHeight());
+        SpannableString sb = new SpannableString("     "+title);
+        ImageSpan imageSpan = new ImageSpan(r, ImageSpan.ALIGN_BOTTOM);
+        sb.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        return sb;
+    }
+
+    private void updateStations() {
+        new Thread(new Runnable() {
+            private Activity a;
+            private ProgressDialog dialog;
+
+            public Runnable with(Activity a) {
+                this.a = a;
+                return this;
+            }
+
+            @Override
+            public void run() {
+                a.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dialog = new ProgressDialog(a);
+                        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                        dialog.show();
+                        dialog.setMessage("Chargement en cours...");
+                        dialog.setProgress(0);
+                        dialog.setMax(3);
+                    }
+                });
+                items.clear();
+                a.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dialog.setMessage("Téléchargement des stations...");
+                        dialog.setProgress(1);
+                    }
+                });
+                items.addAll(JsonParser.loadStationsFromContract(Item.getSelectedContract(a)));
+                a.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dialog.setMessage("Sauvegarde des stations...");
+                        dialog.setProgress(2);
+                    }
+                });
+                new WidgetItemsDatabase.DatabaseLoader.UpdateItems(a, items).start();
+                a.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dialog.setMessage("Rafraichissement de la carte...");
+                        dialog.setProgress(2);
+                        loadMap();
+                        dialog.dismiss();
+                    }
+                });
+            }
+        }.with(this)).start();
+    }
+
+
 
 
     private void loadMap() {

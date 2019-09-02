@@ -8,6 +8,7 @@
     <string name="menu_sort">Trier</string>
 
     <string name="activity_pins_choose">Choisir</string>
+    <string name="activity_pins_update_stations">Recharger les stations</string>
 
     <string name="overlay_station">Station</string>
     <string name="overlay_pinned">ajoutée</string>

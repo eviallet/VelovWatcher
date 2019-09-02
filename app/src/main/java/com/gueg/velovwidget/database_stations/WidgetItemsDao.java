@@ -14,10 +14,10 @@ import static com.gueg.velovwidget.Item.DATABASE_NAME;
 
 @Dao
 public interface WidgetItemsDao {
-    @Query("SELECT * FROM "+DATABASE_NAME+" WHERE contract_name LIKE :contract")
+    @Query("SELECT * FROM "+DATABASE_NAME+" WHERE contractName LIKE :contract")
     List<Item> getAll(String contract);
 
-    @Query("SELECT * FROM "+DATABASE_NAME+" WHERE isPinned LIKE 1 AND contract_name LIKE :contract")
+    @Query("SELECT * FROM "+DATABASE_NAME+" WHERE isPinned LIKE 1 AND contractName LIKE :contract")
     List<Item> getAllPinned(String contract);
 
     @Insert

@@ -95,15 +95,28 @@ public abstract class WidgetItemsDatabase extends RoomDatabase {
         public static class UpdateItems extends Thread {
             Context c;
             ArrayList<Item> items;
+            boolean sort = false;
 
             public UpdateItems(Context c, ArrayList<Item> items) {
                 this.c = c;
                 this.items = items;
             }
 
+            public UpdateItems(Context c, ArrayList<Item> items, boolean sort) {
+                this.c = c;
+                this.items = items;
+                this.sort = sort;
+            }
+
             @Override
             public void run() {
                 PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(IS_DATABASE_BUSY, true).apply();
+                List<Item> pinned = WidgetItemsDatabase.getDatabase(c.getApplicationContext()).widgetItemsDao().getAllPinned(Item.getSelectedContract(c));
+                if(!sort) {
+                    for (Item i : pinned)
+                        if (items.contains(i))
+                            items.remove(i);
+                }
                 WidgetItemsDatabase.getDatabase(c.getApplicationContext()).widgetItemsDao().updateItems(items.toArray(new Item[items.size()]));
                 PreferenceManager.getDefaultSharedPreferences(c).edit().putBoolean(IS_DATABASE_BUSY, false).apply();
             }

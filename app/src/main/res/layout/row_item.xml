@@ -17,6 +17,13 @@
         android:textSize="18sp"
 
         android:layout_margin="5dp"/>
+    <ProgressBar
+        android:id="@+id/widget_item_loading"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+
+        android:visibility="gone"
+        android:layout_margin="5dp"/>
     <LinearLayout
         android:id="@+id/widget_item_dynamic_data_layout"
         android:layout_width="match_parent"
