@@ -255,8 +255,8 @@ public class JsonParser {
             return new DynamicData(
                     json.getString("status"),
                     mainStands.getInt("capacity"),
-                    availabilities.getInt("bikes"),
                     availabilities.getInt("stands"),
+                    availabilities.getInt("bikes"),
                     json.getString("lastUpdate"),
                     json.getBoolean("connected")
             );
