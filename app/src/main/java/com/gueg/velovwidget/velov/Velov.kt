@@ -9,5 +9,6 @@ data class Velov(
         val ratingCount: Int,
         val ratingLastDate: Date,
         val createdAt: Date,
-        val updatedAt: Date
+        val updatedAt: Date,
+        val ratingNone: Boolean
 )

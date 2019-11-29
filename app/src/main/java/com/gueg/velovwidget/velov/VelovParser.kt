@@ -25,14 +25,19 @@ class VelovParser {
                                      val json = jsonResponse[i] as JSONObject
                                      val rating = json["rating"] as JSONObject
 
+                                     var ratingNone = false
+                                     if(rating["count"] as Int == 0)
+                                         ratingNone = true
+
                                      val velov = Velov(
                                              json["standNumber"] as Int,
                                              json["status"] as String,
-                                             rating["value"] as Double,
+                                             if(ratingNone) 0.0 else rating["value"] as Double,
                                              rating["count"] as Int,
-                                             formatDate(rating["lastRatingDateTime"] as String),
+                                             if(ratingNone) Date(0) else formatDate(rating["lastRatingDateTime"] as String),
                                              formatDate(json["createdAt"] as String),
-                                             formatDate(json["updatedAt"] as String)
+                                             formatDate(json["updatedAt"] as String),
+                                             ratingNone
                                      )
 
                                      velovs.add(velov)

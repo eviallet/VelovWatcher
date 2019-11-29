@@ -17,7 +17,11 @@ class VelovAdapter(private val velovs: List<Velov>) : RecyclerView.Adapter<Velov
     override fun onBindViewHolder(holder: ViewHolder, pos: Int) {
         val velov = velovs[pos]
 
-        holder.rating.text = velov.rating.toString()
+        if(velov.ratingNone)
+            holder.rating.text = "--"
+        else
+            holder.rating.text = velov.rating.toString()
+
         holder.standNb.text = velov.standNumber.toString()
     }
 
