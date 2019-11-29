@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="350dp"
+    android:background="@android:color/transparent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+
+        android:background="@color/colorPrimary">
+
+        <TextView
+            android:id="@+id/dialog_velov_stationname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:textColor="@color/colorTextWhite"
+            android:textSize="23sp"
+            android:textAlignment="center"
+
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="250dp">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/dialog_velov_stationlist"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:visibility="gone"/>
+        <ProgressBar
+            android:id="@+id/dialog_velov_loading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:layout_centerHorizontal="true"
+            android:layout_margin="70dp"/>
+        <TextView
+            android:id="@+id/dialog_velov_novelov"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:textColor="@color/colorTextBlack"
+            android:textAlignment="center"
+            android:textSize="19sp"
+            android:text="Aucun vélov dans cette station."
+
+            android:visibility="gone"
+            android:layout_margin="15dp"/>
+    </RelativeLayout>
+
+
+</LinearLayout>

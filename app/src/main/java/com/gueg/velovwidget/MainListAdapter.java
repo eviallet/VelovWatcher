@@ -5,6 +5,8 @@ import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +18,14 @@ import android.widget.TextView;
 
 import com.gueg.velovwidget.database_stations.JsonParser;
 import com.gueg.velovwidget.database_stations.WidgetItemsDatabase;
+import com.gueg.velovwidget.velov.TokenManager;
+import com.gueg.velovwidget.velov.Velov;
+import com.gueg.velovwidget.velov.VelovDialog;
+import com.gueg.velovwidget.velov.VelovParser;
+import com.gueg.velovwidget.velov.VelovRequest;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -29,7 +39,7 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ViewHo
 
     private ArrayList<Item> _list;
     private Context c;
-
+    private FragmentManager fm;
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         LinearLayout bkg, dynamicDataLayout;
@@ -48,8 +58,9 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ViewHo
         }
     }
 
-    public MainListAdapter(Context c) {
-        this.c = c;
+    public MainListAdapter(AppCompatActivity a) {
+        this.c = a;
+        this.fm = a.getSupportFragmentManager();
         _list = new ArrayList<>();
     }
 
@@ -74,10 +85,21 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ViewHo
                 holder.dynamicDataLayout.setVisibility(View.GONE);
                 holder.title.setTextColor(c.getResources().getColor(R.color.colorTextWhite));
                 holder.bkg.setBackgroundColor(c.getResources().getColor(R.color.colorPrimary));
+
+                holder.bkg.setOnClickListener(null);
             } else {
                 holder.dynamicDataLayout.setVisibility(View.VISIBLE);
                 holder.title.setTextColor(c.getResources().getColor(R.color.colorTextBlack));
                 holder.bkg.setBackgroundColor(c.getResources().getColor(R.color.colorTextWhite));
+
+                holder.bkg.setTag(R.id.tag_name, item.name);
+                holder.bkg.setTag(R.id.tag_number, item.number);
+
+                holder.bkg.setOnClickListener(new View.OnClickListener() {
+                    @Override public void onClick(View view) {
+                        new VelovDialog().setStationName((String)view.getTag(R.id.tag_name)).setStationNb((int)view.getTag(R.id.tag_number)).show(fm, null);
+                    }
+                });
 
                 if(item.data == null) {
                     holder.loading.setVisibility(View.VISIBLE);
@@ -145,10 +167,35 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ViewHo
                             MainListAdapter.this.notifyDataSetChanged();
                         }
                     });
+                    boolean hasServersBeenTested = false;
                     for(int i=0; i<_list.size(); i++) {
                         final int pos = i;
-                        if(!_list.get(i).isSeparator())
+                        if(!_list.get(i).isSeparator()) {
                             _list.get(i).setData(JsonParser.updateDynamicDataFromApi(_list.get(i)).data);
+                            if(!hasServersBeenTested) {
+                                final int stationId = _list.get(i).number;
+
+                                TokenManager.Companion.getToken(c, new TokenManager.TokenManagerListener() {
+                                    @Override
+                                    public void onTokenParsed(@Nullable String token) {
+                                        if(token == null) {
+                                            _listener.onServerResult(true); // error
+                                            return;
+                                        }
+
+                                        VelovParser.Companion.parse(c, new VelovRequest(stationId, token), new VelovParser.VelovParserListener() {
+                                            @Override public void onParseComplete(@NotNull ArrayList<Velov> velovs) {
+                                                _listener.onServerResult(false); // no error
+                                            }
+                                            @Override public void onParseError() {
+                                                _listener.onServerResult(true); // error
+                                            }
+                                        });
+                                    }
+                                });
+                                hasServersBeenTested = true;
+                            }
+                        }
                         ((MainListActivity)c).runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -184,5 +231,6 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ViewHo
         void onRefreshStarted();
         void onProgressChanged(int progress, int max);
         void onRefreshFinished();
+        void onServerResult(boolean err);
     }
 }

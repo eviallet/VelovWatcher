@@ -1,6 +1,13 @@
 <resources>
+    <item type="id" name="tag_name" />
+    <item type="id" name="tag_number" />
+
     <string name="widget_title">Vélo\'v watcher</string>
     <string name="widget_last_udpate_time">Dernière actualisation : </string>
+
+    <string name="servers_online">Serveurs en ligne</string>
+    <string name="servers_loading">Test des serveurs...</string>
+    <string name="servers_offline">Serveurs hors ligne</string>
 
     <string name="menu_change_city">Changer de ville</string>
     <string name="menu_refresh">Rafraichir</string>

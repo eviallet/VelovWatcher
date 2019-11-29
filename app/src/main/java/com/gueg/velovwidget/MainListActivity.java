@@ -11,7 +11,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.gueg.velovwidget.database_stations.JsonParser;
 import com.gueg.velovwidget.map.PinsActivity;
@@ -33,6 +35,9 @@ public class MainListActivity extends AppCompatActivity {
     SwipeRefreshLayout _swipe;
     ProgressBar _progress;
 
+    ImageView _serverIcon;
+    TextView _serverText;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +45,9 @@ public class MainListActivity extends AppCompatActivity {
         JsonParser.loadApiKey(this);
 
         setContentView(R.layout.activity_list);
+
+        _serverIcon = findViewById(R.id.widget_list_servers_icon);
+        _serverText = findViewById(R.id.widget_list_servers_text);
 
         _swipe = findViewById(R.id.widget_list_refresh);
         _list = findViewById(R.id.widget_list_stations);
@@ -49,6 +57,8 @@ public class MainListActivity extends AppCompatActivity {
         _adapter.setListener(new MainListAdapter.RefreshListener() {
             @Override public void onRefreshStarted() {
                 _swipe.setRefreshing(true);
+                _serverIcon.setImageDrawable(getApplicationContext().getResources().getDrawable(R.drawable.ic_server_loading));
+                _serverText.setText(getApplicationContext().getResources().getString(R.string.servers_loading));
             }
             @Override public void onProgressChanged(int progress, int max) {
                 if(_progress.getVisibility()!= View.VISIBLE)
@@ -61,6 +71,15 @@ public class MainListActivity extends AppCompatActivity {
                 _swipe.setRefreshing(false);
                 if(_progress.getProgress()==0)
                     startActivityForResult(new Intent(MainListActivity.this, PinsActivity.class), ACTIVITY_PINS);
+            }
+            @Override public void onServerResult(boolean err) {
+                if(err) {
+                    _serverIcon.setImageDrawable(getApplicationContext().getResources().getDrawable(R.drawable.ic_server_offline));
+                    _serverText.setText(getApplicationContext().getResources().getString(R.string.servers_offline));
+                } else {
+                    _serverIcon.setImageDrawable(getApplicationContext().getResources().getDrawable(R.drawable.ic_server_online));
+                    _serverText.setText(getApplicationContext().getResources().getString(R.string.servers_online));
+                }
             }
         });
         _list.setAdapter(_adapter);
@@ -95,8 +114,6 @@ public class MainListActivity extends AppCompatActivity {
             return;
         switch(requestCode) {
             case ACTIVITY_PINS:
-                _adapter.refresh();
-                break;
             case ACTIVITY_SORT:
                 _adapter.refresh();
                 break;
