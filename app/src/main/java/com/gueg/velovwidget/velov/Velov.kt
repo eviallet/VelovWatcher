@@ -4,6 +4,7 @@ import java.util.*
 
 data class Velov(
         val standNumber: Int,
+        val type: String,
         val status: String,
         val rating: Double,
         val ratingCount: Int,

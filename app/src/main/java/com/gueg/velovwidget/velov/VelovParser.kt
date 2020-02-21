@@ -31,6 +31,7 @@ class VelovParser {
 
                                      val velov = Velov(
                                              json["standNumber"] as Int,
+                                             json["type"] as String,
                                              json["status"] as String,
                                              if(ratingNone) 0.0 else rating["value"] as Double,
                                              rating["count"] as Int,
@@ -56,7 +57,12 @@ class VelovParser {
         }
 
         // 2019-11-04T19:42:21.325
-        private fun formatDate(str: String): Date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SS").parse(str)!!
+        private fun formatDate(str: String): Date {
+            var d = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SS").parse(str)
+            if(d== null)
+                d = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(str)!!
+            return d
+        }
 
     }
 
